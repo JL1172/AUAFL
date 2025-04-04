@@ -1,0 +1,141 @@
+.task--page--container-- {
+    width: 100%;
+    margin-top: 28px;
+    height: 85vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .task-container {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        background-color: rgb(241, 241, 241);
+        height: 46rem;
+        width: 70rem;
+        border: 2px solid blue;
+
+        .top-row-- {
+            height: 50px;
+            width: 100%;
+            border-bottom: 1px solid blue;
+            display: flex;
+            ;
+            justify-content: center;
+            align-items: center;
+            font-family: Roboto;
+            font-size: 30px;
+            position: relative;
+
+            .pause {
+                position: absolute;
+                display: flex;
+                width: 10rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                transition: .1s ease-in-out;
+                gap: 2px;
+
+                &:hover {
+
+                    background-color: rgb(197, 197, 197);
+                    transition: .1s ease-in-out;
+                }
+
+                right: 10px;
+                align-items: center;
+                border: 2px solid blue;
+
+                h6 {
+                    font-size: 16px;
+                    font-family: Roboto;
+                }
+            }
+        }
+        .col-names {
+            width: 100%;
+            display: flex;
+            height: 50px;
+            border: 2px solid blue;
+            align-items: center;
+            h6 {
+                &:nth-of-type(1) {
+                    min-width:10rem;
+                    max-width:10rem;
+                }
+                font-family: Roboto;
+                    text-transform: capitalize;
+                    display: flex;
+                    font-weight: 700;
+                    font-size: 18px;
+                    padding-left: 5px;
+                    border-right: 1px solid black;
+                    min-width: 8rem;
+                    max-width: 8rem;
+                    width: 15%;
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    
+                   &:nth-of-type(8) {
+                    border: none;
+                    min-width: 120px
+                   }
+                }
+        }
+
+        .process-list {
+            height: 43rem;
+            display: flex;
+            flex-direction: column;
+            overflow: auto;
+            width: 100%;
+
+            .row__ {
+                display: flex;
+                align-items: center;
+                width: 100%;
+                min-height: 50px;
+                border-bottom: 1px solid black;
+                ;
+
+                .first-- {
+                    min-width:10rem;
+                    max-width:10rem;
+                    font-family: Roboto;
+                    text-transform: capitalize;
+                    display: flex;
+                    font-weight: 700;
+                    text-wrap: wrap;
+                    overflow: auto;
+                    font-size: 14px;
+                    padding-left: 5px;
+                    align-items: center;
+                    height: 100%;
+                    border-right: 1px solid black;
+                }
+                .field {
+                    font-family: Roboto;
+                    overflow: hidden;
+                    text-transform: capitalize;
+                    display: flex;
+                    font-weight: 700;
+                    text-wrap: wrap;
+                    font-size: 14px;
+                    padding-left: 5px;
+                    min-width: 8rem;
+                    max-width: 8rem;
+                    align-items: center;
+                    height: 100%;
+                    border-right: 1px solid black;
+                    &:nth-of-type(8) {
+                        border: none;
+                       }
+                }
+            }
+
+        }
+    }
+}
