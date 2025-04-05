@@ -2,24 +2,45 @@ import * as fs from "fs";
 import { exec } from "child_process";
 import path from "path";
 
-async function computeCpuTime(pid: string) {
+interface ProcessObj {
+  Name: string;
+  Pid: string;
+  VmPeak: string;
+  VmRSS: string;
+  RssAnon: string;
+  Threads: string;
+  VmSize: string;
+  VmSwap: string;
+  cpuUtilization: number;
+  memoryUtilization: number;
+  rawCpuTime: { utime: number; stime: number; timestamp: number };
+}
+
+interface Process {
+  [key: string]: ProcessObj[] | number | boolean;
+  memory: number;
+  currSwap: number;
+  currRam: number;
+  memPeakAverage: number;
+  averageCpuTime: number;
+  displayCpuTime: boolean;
+}
+
+function computeCpuTime(pid: string) {
   try {
     const statFilePath = `/proc/${pid}/stat`;
     const data = fs.readFileSync(statFilePath, { encoding: "utf-8" });
     const fields = data.split(" ");
     const utime = parseInt(fields[13]); // user mode time
-    const stime = parseInt(fields[14]); //kernel mode time
-    const firstTotalCpuTime = utime + stime;
-    // await new Promise((resolve) => setTimeout(resolve, 1000));
-    // const data2 = fs.readFileSync(statFilePath, { encoding: "utf-8" });
-    // const fields2 = data2.split(" ");
-    // const utime2 = parseInt(fields2[13]); // user mode time
-    // const stime2 = parseInt(fields2[14]); //kernel mode time
-    // const secondTotalCpuTime = utime2 + stime2;
-    // const cpuUsage = ((secondTotalCpuTime - firstTotalCpuTime) / 1000) * 100;
-    return firstTotalCpuTime;
-  } catch {
-    console.error(`Error computing utilization percentage`);
+    const stime = parseInt(fields[14]); // kernel mode time
+    
+    return {
+      utime,
+      stime,
+      timestamp: Date.now(),
+    };
+  } catch (err) {
+    console.error(`Error computing CPU time for process ${pid}:`, err);
     return null;
   }
 }
@@ -32,7 +53,7 @@ async function readStatusFile(
 ) {
   try {
     let found = arrToCompare?.length;
-    const map = {
+    const map: any = {
       Name: "",
       Pid: "",
       VmPeak: "",
@@ -40,59 +61,66 @@ async function readStatusFile(
       RssAnon: "",
       VmSwap: "",
       Threads: "",
+      VmSize: "",
       memoryUtilization: 0,
       cpuUtilization: 0,
+      rawCpuTime: null,
     };
+    
     (await fs.promises.readFile(path, { encoding: "utf-8" }))
       ?.split("\n")
-      ?.map((n) => {
+      ?.forEach((n) => {
         const lineSplit = n?.split(":");
-        if (arrToCompare.some((item) => item === lineSplit?.[0]?.trim())) {
+        if (lineSplit?.[0] && arrToCompare.includes(lineSplit[0]?.trim())) {
           found--;
-
           map[lineSplit[0]?.trim()] = lineSplit?.[1]
             ?.replace(/\t/g, "")
             ?.trim();
         }
       });
+      
     if (found === 0) {
-      const cpuUtilizationResult = await computeCpuTime(pid);
+      const cpuTimeResult = computeCpuTime(pid);
 
-      if (!cpuUtilizationResult) {
+      if (!cpuTimeResult) {
         return null;
       } else {
-        map.cpuUtilization = cpuUtilizationResult;
-        map.memoryUtilization =
-          ((Number(map.VmRSS?.split(" ")[0]) / totalRamSize) * 100);
+        map.rawCpuTime = cpuTimeResult;
+        map.memoryUtilization = 
+          (parseInt(map.VmRSS?.split(" ")[0]) / totalRamSize) * 100;
         return map;
       }
     }
     return null;
-  } catch {
-    console.error(`Error reading status file from process: ${pid}`);
-    // throw new Error(`Error reading status file from process: ${pid}` + err);
+  } catch (err) {
+    console.error(`Error reading status file from process: ${pid}`, err);
+    return null;
   }
 }
 
 async function viewRamTotal() {
   try {
-    return (await fs.promises.readFile("/proc/meminfo", { encoding: "utf-8" }))
+    const meminfo = await fs.promises.readFile("/proc/meminfo", { encoding: "utf-8" });
+    return meminfo
       ?.split("\n")?.[0]
       ?.split(":")?.[1]
       ?.replace(/\t/g, "")
       ?.trim();
-  } catch {
-    console.error("Error reading system memory files");
+  } catch (err) {
+    console.error("Error reading system memory files:", err);
+    return null;
   }
 }
 
-async function viewTasks() {
+async function viewTasks(previousProcArr?: Process[]) {
+  const computeCpuUtilization = Boolean(previousProcArr);
   try {
     const ramMemTotal = await viewRamTotal();
     if (!ramMemTotal) {
       console.error("Problem fetching system memory stats");
-      return;
+      return [];
     }
+    
     const arrToCompare = [
       "Name",
       "Pid",
@@ -103,6 +131,7 @@ async function viewTasks() {
       "VmSwap",
       "Threads",
     ];
+    
     const processList: string[] = await new Promise((resolve, reject) => {
       exec("cd /proc && ls", (err, data) => {
         if (err) reject(err);
@@ -110,20 +139,11 @@ async function viewTasks() {
       });
     });
 
-    /**
-     * name
-     * pid
-     * VmPeak // max amount of virutal memory proc has used virtual memory
-     * VmSize (ram swap space) // total virtual memory process is using bot hram and swap space
-     * VmRSS (ram) // amount of ram currently being used
-     * RssAnon if high it can indicate that the process is using a lot of dynamic allocation, potential memory leaks or inefficient memory use
-     * VmSwap space on disk used when ram is exhausted
-     * threads
-     */
-    let strict_arr = new Array(processList?.length).fill(0);
-    const idx_map = {};
+    let strict_arr: Process[] = new Array(processList?.length).fill(0);
+    const idx_map: {[key: string]: number} = {};
     const len = processList?.length;
     let strict_arr_idx_tracker = 0;
+    
     for (let i = 0; i < len; i++) {
       const currentPidToView = processList[i];
       const statusFilePath = path.join("/proc", currentPidToView, "status");
@@ -131,53 +151,132 @@ async function viewTasks() {
         statusFilePath,
         currentPidToView,
         arrToCompare,
-        Number(ramMemTotal?.split(" ")[0])
+        parseInt(ramMemTotal?.split(" ")[0])
       );
+      
       if (process) {
         const { Name } = process;
         if (Name in idx_map) {
           const index = idx_map[Name];
+          const procArr = strict_arr[index][Name] as ProcessObj[];
+          const procArrLen = procArr.length + 1;
+          
           strict_arr[index] = {
-            [Name]: [...strict_arr[index][Name], process],
+            [Name]: [...procArr, process],
             memPeakAverage: Math.floor(
-              (strict_arr[index].memPeakAverage +
-                Number(process.VmPeak?.split(" ")?.[0])) /
-                (strict_arr[index][Name]?.length + 1)
+              (strict_arr[index].memPeakAverage as number +
+                parseInt(process.VmPeak?.split(" ")?.[0])) /
+                procArrLen
             ),
             currRam: Math.floor(
-              (strict_arr[index].currRam +
-                Number(process.VmRSS?.split(" ")?.[0])) /
-                (strict_arr[index][Name]?.length + 1)
+              (strict_arr[index].currRam as number +
+                parseInt(process.VmRSS?.split(" ")?.[0])) /
+                procArrLen
             ),
             currSwap: Math.floor(
-              (strict_arr[index].cpuSwap +
-                Number(process.VmSwap?.split(" ")?.[0])) /
-                (strict_arr[index][Name]?.length + 1)
+              (strict_arr[index].currSwap as number +
+                parseInt(process.VmSwap?.split(" ")?.[0])) /
+                procArrLen
             ),
             memory: Math.floor(
-              (strict_arr[index].memory +
-                process.memoryUtilization) /
-                (strict_arr[index][Name]?.length + 1)
+              (strict_arr[index].memory as number + process.memoryUtilization) /
+                procArrLen
             ),
+            averageCpuTime: 0,
+            displayCpuTime: computeCpuUtilization,
           };
         } else {
           idx_map[Name] = strict_arr_idx_tracker;
           strict_arr[strict_arr_idx_tracker] = {
             [Name]: [process],
-            memPeakAverage: Number(process.VmPeak?.split(" ")?.[0]),
-            currRam: Number(process.VmRSS?.split(" ")?.[0]),
-            currSwap: Number(process.VmSwap?.split(" ")?.[0]),
+            memPeakAverage: parseInt(process.VmPeak?.split(" ")?.[0]),
+            currRam: parseInt(process.VmRSS?.split(" ")?.[0]),
+            currSwap: parseInt(process.VmSwap?.split(" ")?.[0]),
             memory: process.memoryUtilization,
+            averageCpuTime: 0,
+            displayCpuTime: computeCpuUtilization,
           };
           strict_arr_idx_tracker++;
         }
       }
     }
-    strict_arr = strict_arr.filter((n) => n !== 0);
+
+    strict_arr = strict_arr.filter((n:any) => n !== 0);
+    
+    if (computeCpuUtilization && previousProcArr?.length > 0) {
+      const lenOfStrictArr = strict_arr?.length;
+      for (let j = 0; j < lenOfStrictArr; j++) {
+        const currProc = strict_arr[j];
+        const nameOfProc = Object.keys(currProc)?.find((key) =>
+          Array.isArray(currProc[key])
+        );
+
+        if (!nameOfProc) continue;
+
+        const currentProcesses = currProc[nameOfProc] as ProcessObj[];
+        const previousProcess = previousProcArr?.find((n) => nameOfProc in n);
+
+        if (!previousProcess) continue;
+
+        const previousProcesses = previousProcess[nameOfProc] as ProcessObj[];
+
+        let totalCpuUtilization = 0;
+        let matchCount = 0;
+
+        const lenOfCurrentProc = currentProcesses?.length;
+        for (let i = 0; i < lenOfCurrentProc; i++) {
+          const currentSubProcess = currentProcesses[i];
+          const matchingPreviousProcess = previousProcesses?.find(
+            (n: ProcessObj) => n?.Pid === currentSubProcess?.Pid
+          );
+          
+          if (
+            matchingPreviousProcess &&
+            currentSubProcess.rawCpuTime &&
+            matchingPreviousProcess?.rawCpuTime
+          ) {
+            const timeDiff = 
+              (currentSubProcess.rawCpuTime.timestamp - 
+              matchingPreviousProcess.rawCpuTime.timestamp) / 1000;
+              
+            if (timeDiff <= 0) continue;
+
+            const prevTotal = 
+              matchingPreviousProcess.rawCpuTime.utime + 
+              matchingPreviousProcess.rawCpuTime.stime;
+              
+            const currTotal = 
+              currentSubProcess.rawCpuTime.utime + 
+              currentSubProcess.rawCpuTime.stime;  // Fixed this line
+              
+            const cpuTimeDiff = currTotal - prevTotal;
+            
+            // On Linux, /proc/stat reports in USER_HZ, typically 100 ticks per second
+            const clockTicksPerSecond = 100; 
+            
+            // Calculate CPU utilization as percentage of one CPU core
+            const utilization = (cpuTimeDiff / (clockTicksPerSecond * timeDiff)) * 100;
+            
+            currentSubProcess.cpuUtilization = Math.max(0, Math.min(100, utilization));
+            totalCpuUtilization += currentSubProcess.cpuUtilization;
+            matchCount++;
+          }
+        }
+
+        currProc.averageCpuTime = matchCount > 0 ? totalCpuUtilization / matchCount : 0;
+        currProc.displayCpuTime = true;
+      }
+    }
+
+    // Sort by CPU utilization (descending)
+    strict_arr.sort((a, b) => {
+      return (b?.averageCpuTime as number) - (a?.averageCpuTime as number);
+    });
+    
     return strict_arr;
   } catch (err) {
-    console.log(err);
-    return;
+    console.error("Error in viewTasks:", err);
+    return [];
   }
 }
 

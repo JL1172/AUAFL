@@ -12,9 +12,9 @@ server.use(morgan("combined"));
 server.use(cors());
 server.use(helmet());
 
-server.get("/process", async (req: Request, res: Response, next) => {
+server.post("/process", async (req: Request, res: Response, next) => {
   try {
-    const listOfProcesses =await viewTasks();
+    const listOfProcesses =await viewTasks(req?.body?.previousProcArr);
     res.status(200).json({ processes: listOfProcesses });
   } catch (err: unknown) {
     next(err);
