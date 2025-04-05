@@ -13,8 +13,11 @@
         flex-direction: column;
         background-color: rgb(241, 241, 241);
         height: 46rem;
-        width: 70rem;
+        width: 72.99rem;
+        overflow: hidden;
+        position: relative;
         border: 2px solid blue;
+
 
         .top-row-- {
             height: 50px;
@@ -27,6 +30,20 @@
             font-family: Roboto;
             font-size: 30px;
             position: relative;
+
+            h5 {
+
+                font-weight: 700;
+            }
+
+            @media screen and (max-width: 700px) {
+                h5 {
+                    font-size: 20px;
+                    left: 1%;
+                    position: absolute;
+                }
+
+            }
 
             .pause {
                 position: absolute;
@@ -48,42 +65,58 @@
                 align-items: center;
                 border: 2px solid blue;
 
+                @media screen and (max-width: 700px) {
+                    width: 5rem;
+
+                }
+
                 h6 {
                     font-size: 16px;
                     font-family: Roboto;
+
+                    @media screen and (max-width: 700px) {
+                        display: none;
+                    }
                 }
             }
         }
+
         .col-names {
-            width: 100%;
             display: flex;
-            height: 50px;
-            border: 2px solid blue;
+            border-bottom: 6px solid blue;
             align-items: center;
+            background-color: white;
+            min-height: 50px;
+            height: 50px;
+            top: 0px;
+            position: sticky;
+            overflow: hidden;
+
             h6 {
                 &:nth-of-type(1) {
-                    min-width:10rem;
-                    max-width:10rem;
+                    min-width: 10rem;
+                    max-width: 10rem;
                 }
+
                 font-family: Roboto;
-                    text-transform: capitalize;
-                    display: flex;
-                    font-weight: 700;
-                    font-size: 18px;
-                    padding-left: 5px;
-                    border-right: 1px solid black;
-                    min-width: 8rem;
-                    max-width: 8rem;
-                    width: 15%;
-                    height: 100%;
-                    display: flex;
-                    align-items: center;
-                    
-                   &:nth-of-type(8) {
+                text-transform: capitalize;
+                display: flex;
+                font-weight: 700;
+                font-size: 18px;
+                padding-left: 5px;
+                border-right: 1px solid black;
+                min-width: 8rem;
+                max-width: 8rem;
+                width: 15%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+
+                &:nth-of-type(8) {
                     border: none;
                     min-width: 120px
-                   }
                 }
+            }
         }
 
         .process-list {
@@ -96,14 +129,14 @@
             .row__ {
                 display: flex;
                 align-items: center;
-                width: 100%;
+                width: 72rem;
                 min-height: 50px;
                 border-bottom: 1px solid black;
                 ;
 
                 .first-- {
-                    min-width:10rem;
-                    max-width:10rem;
+                    min-width: 10rem;
+                    max-width: 10rem;
                     font-family: Roboto;
                     text-transform: capitalize;
                     display: flex;
@@ -116,6 +149,7 @@
                     height: 100%;
                     border-right: 1px solid black;
                 }
+
                 .field {
                     font-family: Roboto;
                     overflow: hidden;
@@ -130,9 +164,11 @@
                     align-items: center;
                     height: 100%;
                     border-right: 1px solid black;
+
                     &:nth-of-type(8) {
                         border: none;
-                       }
+
+                    }
                 }
             }
 

@@ -31,7 +31,6 @@ export default function TaskViewerPage() {
     if (watchStatus) {
       intervalRef.current = setInterval(() => {
         fetchTasks();
-        console.log("fetched");
       }, 1000);
     } else if (intervalRef.current !== -1) {
       clearInterval(intervalRef.current);
@@ -49,7 +48,10 @@ export default function TaskViewerPage() {
       <div className="task--page--container--">
         <div className="task-container">
           <div className="top-row--">
-            System Processes{" "}
+            <span className="filter--container">
+
+            </span>
+            <h5>System Processes{" "}</h5>
             <span
               onClick={() => setWatchStatus(!watchStatus)}
               className="pause"
@@ -62,6 +64,7 @@ export default function TaskViewerPage() {
               )}
             </span>
           </div>
+          <div className="process-list">
           <div className="col-names">
             <h6>Process Name</h6>
             <h6>Memory %</h6>
@@ -72,7 +75,6 @@ export default function TaskViewerPage() {
             <h6>VmRSS</h6>
             <h6>VmSwap</h6>
           </div>
-          <div className="process-list">
             {tasks?.map((n: Process, i) => {
               const name = Object.keys(n)?.[0];
               const processArray: any = n?.[name];
