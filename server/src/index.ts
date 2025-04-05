@@ -14,14 +14,22 @@ server.use(helmet());
 
 server.post("/process", async (req: Request, res: Response, next) => {
   try {
-    const listOfProcesses =await viewTasks(req?.body?.previousProcArr);
+    const listOfProcesses = await viewTasks(req?.body?.previousProcArr);
     res.status(200).json({ processes: listOfProcesses });
   } catch (err: unknown) {
     next(err);
   }
 });
 
-
+server.get("/general-info", (req: Request, res: Response, next) => {
+  try {
+    res.status(200).json({ appName: "AUAFL" });
+  } catch (err) {
+    {
+      next(err);
+    }
+  }
+});
 //eslint-disable-next-line
 server.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);

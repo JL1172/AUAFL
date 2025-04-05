@@ -15,7 +15,7 @@ interface ProcessObj {
   cpuUtilization: number;
   memoryUtilization: string;
 }
-interface Process {
+export interface Process {
   [key: string]: ProcessObj | number | boolean;
   memory: number;
   currSwap: number;
