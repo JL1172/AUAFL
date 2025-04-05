@@ -14,7 +14,8 @@ server.use(helmet());
 
 server.post("/process", async (req: Request, res: Response, next) => {
   try {
-    const listOfProcesses = await viewTasks(req?.body?.previousProcArr);
+
+    const listOfProcesses = await viewTasks(req?.body?.previousProcArr, req?.body?.filters);
     res.status(200).json({ processes: listOfProcesses });
   } catch (err: unknown) {
     next(err);

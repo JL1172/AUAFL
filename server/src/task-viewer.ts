@@ -93,7 +93,7 @@ async function readStatusFile(
     }
     return null;
   } catch (err) {
-    console.error(`Error reading status file from process: ${pid}`, err);
+
     return null;
   }
 }
@@ -112,7 +112,7 @@ async function viewRamTotal() {
   }
 }
 
-async function viewTasks(previousProcArr?: Process[]) {
+async function viewTasks(previousProcArr?: Process[], filters?: string[]) {
   const computeCpuUtilization = Boolean(previousProcArr);
   try {
     const ramMemTotal = await viewRamTotal();
@@ -269,9 +269,37 @@ async function viewTasks(previousProcArr?: Process[]) {
     }
 
     // Sort by CPU utilization (descending)
-    strict_arr.sort((a, b) => {
-      return (b?.averageCpuTime as number) - (a?.averageCpuTime as number);
-    });
+    if (filters) {
+      const [field, direction]= filters;
+      if (direction === 'asc') {
+        if (field === "Name") {
+          strict_arr.sort((a, b) => {
+            const name = Object.keys(a)?.[0];
+            const name2 = Object.keys(b)?.[0];
+            return name < name2 ? 1 : -1;
+          });
+        } else {
+
+          strict_arr.sort((a, b) => {
+            return (a?.[field] as number) - (b?.[field] as number);
+          });
+        }
+      } else {
+        if (field === "Name") {
+          strict_arr.sort((a, b) => {
+            const name = Object.keys(a)?.[0];
+            const name2 = Object.keys(b)?.[0];
+            return name2 < name ? 1 : -1;
+          });
+        } else {
+
+          strict_arr.sort((a, b) => {
+            return (b?.[field] as number) - (a?.[field] as number);
+          });
+        }
+     
+      }
+    }
     
     return strict_arr;
   } catch (err) {
