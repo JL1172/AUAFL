@@ -17,13 +17,15 @@ interface ProcessObj {
 }
 
 interface Process {
-  [key: string]: ProcessObj[] | number | boolean;
+  [key: string]: ProcessObj[] | number | boolean | string;
   memory: number;
   currSwap: number;
   currRam: number;
   memPeakAverage: number;
   averageCpuTime: number;
   displayCpuTime: boolean;
+  averageThreads: number;
+  processName:string;
 }
 
 function computeCpuTime(pid: string) {
@@ -160,7 +162,7 @@ async function viewTasks(previousProcArr?: Process[], filters?: string[]) {
           const index = idx_map[Name];
           const procArr = strict_arr[index][Name] as ProcessObj[];
           const procArrLen = procArr.length + 1;
-          
+   
           strict_arr[index] = {
             [Name]: [...procArr, process],
             memPeakAverage: Math.floor(
@@ -184,6 +186,8 @@ async function viewTasks(previousProcArr?: Process[], filters?: string[]) {
             ),
             averageCpuTime: 0,
             displayCpuTime: computeCpuUtilization,
+            averageThreads: process.Threads,
+            processName: Name,
           };
         } else {
           idx_map[Name] = strict_arr_idx_tracker;
@@ -195,6 +199,8 @@ async function viewTasks(previousProcArr?: Process[], filters?: string[]) {
             memory: process.memoryUtilization,
             averageCpuTime: 0,
             displayCpuTime: computeCpuUtilization,
+            averageThreads: process.Threads,
+            processName: process.Name,
           };
           strict_arr_idx_tracker++;
         }
@@ -207,9 +213,7 @@ async function viewTasks(previousProcArr?: Process[], filters?: string[]) {
       const lenOfStrictArr = strict_arr?.length;
       for (let j = 0; j < lenOfStrictArr; j++) {
         const currProc = strict_arr[j];
-        const nameOfProc = Object.keys(currProc)?.find((key) =>
-          Array.isArray(currProc[key])
-        );
+        const nameOfProc = currProc?.processName;
 
         if (!nameOfProc) continue;
 
@@ -274,8 +278,8 @@ async function viewTasks(previousProcArr?: Process[], filters?: string[]) {
       if (direction === 'asc') {
         if (field === "Name") {
           strict_arr.sort((a, b) => {
-            const name = Object.keys(a)?.[0];
-            const name2 = Object.keys(b)?.[0];
+            const name = a.processName;
+            const name2 = b.processName;
             return name < name2 ? 1 : -1;
           });
         } else {
@@ -287,8 +291,8 @@ async function viewTasks(previousProcArr?: Process[], filters?: string[]) {
       } else {
         if (field === "Name") {
           strict_arr.sort((a, b) => {
-            const name = Object.keys(a)?.[0];
-            const name2 = Object.keys(b)?.[0];
+            const name = a.processName;
+            const name2 = b.processName;
             return name2 < name ? 1 : -1;
           });
         } else {

@@ -13,6 +13,7 @@ type useTaskHookType = {
   filters: React.RefObject<string[]>;
   filtersState: string[];
   setFiltersState: (n: string[]) => void;
+  renderHighlight: (n:string,o:string,p:string) => string;
 };
 
 export const useTask = (): useTaskHookType => {
@@ -47,6 +48,17 @@ export const useTask = (): useTaskHookType => {
       }
     }
   }, [axiosInsance]);
+  const renderHighlight = useCallback(
+    (orderState: string, filterState: string, expectedFilterState: string) => {
+      if (orderState === "desc" && filterState === expectedFilterState) {
+        return "highlight";
+      } else if (orderState === "asc" && filterState === expectedFilterState) {
+        return "highlight-green";
+      }
+      return "";
+    },
+    []
+  );
   return {
     fetchTasks,
     watchStatus,
@@ -58,5 +70,6 @@ export const useTask = (): useTaskHookType => {
     filtersState,
     setFiltersState,
     filters,
+    renderHighlight,
   };
 };
