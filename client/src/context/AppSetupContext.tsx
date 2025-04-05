@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect } from "react";
-import { useAppSetup,useAppSetupReturnType } from "../config/useAppSetup";
-
+import {
+  useAppSetup,
+} from "../utils/app-utils/useAppSetup";
 
 interface AppContext {
   appName: string;
@@ -8,8 +9,12 @@ interface AppContext {
 
 const AppSetupContext = createContext<AppContext | undefined>(undefined);
 
-export const AppSetupProvider = ({children}: {children: React.ReactNode}) => {
-  const { appName, fetchAppData } = useAppSetup<useAppSetupReturnType>();
+export const AppSetupProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const { appName, fetchAppData } = useAppSetup();
   useEffect(() => {
     fetchAppData();
   }, [fetchAppData]);
@@ -18,7 +23,9 @@ export const AppSetupProvider = ({children}: {children: React.ReactNode}) => {
       value={{
         appName,
       }}
-    >{children}</AppSetupContext.Provider>
+    >
+      {children}
+    </AppSetupContext.Provider>
   );
 };
 

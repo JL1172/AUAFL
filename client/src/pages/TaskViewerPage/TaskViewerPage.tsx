@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect} from "react";
 import "./taskviewer-page.scss";
-import axios from "axios";
 import { CiPause1 } from "react-icons/ci";
 import { RxResume } from "react-icons/rx";
+import { useTask } from "./hooks/useTask";
 interface ProcessObj {
   Name: string;
   Pid: string;
@@ -25,25 +25,8 @@ export interface Process {
   displayCpuTime: boolean;
 }
 export default function TaskViewerPage() {
-  const [watchStatus, setWatchStatus] = useState(true);
-  const [tasks, setTasks] = useState([]);
-  const intervalRef = useRef(-1);
-  const previousTaskRef = useRef(null);
-  const sendPreviousProcArr = useRef(false);
-  const fetchTasks = async () => {
-    if (sendPreviousProcArr?.current) {
-      const res = await axios.post("http://localhost:4000/process", {
-        previousProcArr: previousTaskRef.current,
-      });
-      setTasks(res?.data?.processes);
-      previousTaskRef.current= res?.data?.processes;
-    } else {
-      const res = await axios.post("http://localhost:4000/process");
-      setTasks(res?.data?.processes);
-      sendPreviousProcArr.current = true;
-      previousTaskRef.current= res?.data?.processes;
-    }
-  };
+  const { fetchTasks, watchStatus, setWatchStatus, tasks, intervalRef } =
+    useTask();
   useEffect(() => {
     if (watchStatus) {
       intervalRef.current = setInterval(() => {
@@ -59,8 +42,8 @@ export default function TaskViewerPage() {
         clearInterval(intervalRef.current);
       }
     };
+    //eslint-disable-next-line
   }, [watchStatus]);
-  // debugger
   return (
     tasks?.length && (
       <div className="task--page--container--">
@@ -92,7 +75,6 @@ export default function TaskViewerPage() {
           <div className="process-list">
             {tasks?.map((n: Process, i) => {
               const name = Object.keys(n)?.[0];
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const processArray: any = n?.[name];
               return (
                 <div className="row__" key={i}>

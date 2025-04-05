@@ -1,10 +1,11 @@
 import { VscTerminalLinux } from "react-icons/vsc";
 import "./header.scss";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useApp } from "../../context/AppSetupContext";
 export default function Header() {
   const nav = useNavigate();
   const { search } = useLocation();
-
+const {appName} = useApp()!;
   return (
     <div className="header">
       <div
@@ -15,7 +16,7 @@ export default function Header() {
         }}
       >
         <VscTerminalLinux style={{ width: "1rem", height: "1rem" }} />
-        <h1>AUA</h1>
+        <h1>{appName}</h1>
       </div>
       <div className="location">
         {search

@@ -1,7 +1,6 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { AUAFLAxiosInstance } from "../axios-utils/axios-instance";
-import { axiosOptions } from "../axios-utils/axios.options";
 
 export type useAppSetupReturnType ={
     appName: string;
@@ -16,14 +15,14 @@ export const useAppSetup = (): useAppSetupReturnType => {
   }, []);
 
   const fetchAppData = useCallback(async () => {
-    if (axiosInstance && axiosOptions) {
+    if (axiosInstance) {
       try {
-        const res = await axiosInstance[axiosOptions?.general_info?.method](
-          `/${axiosOptions?.general_info?.route}`
+        const res = await axiosInstance.get(
+          `/general-info`
         );
-        console.log(res);
         setAppName(res?.data?.appName);
-      } catch {
+      } catch (err){
+        console.log(err);
         alert("Error fetching app data");
       }
     }
