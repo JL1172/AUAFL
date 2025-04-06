@@ -7,6 +7,7 @@ interface Props {
   setTaskToKill?: React.Dispatch<React.SetStateAction<Process | null>>;
   taskToKill?: Process | null;
   renderOne: boolean;
+  loading: boolean;
 }
 export default function ProcessRows({
   renderHighlight,
@@ -15,6 +16,7 @@ export default function ProcessRows({
   setTaskToKill,
   taskToKill,
   renderOne,
+  loading,
 }: Props) {
   const rowLayout = useMemo(() => {
     return [
@@ -79,7 +81,9 @@ export default function ProcessRows({
           return (
             <div
               onClick={() => {
-                setTaskToKill?.(task);
+                if (!loading) {
+                  setTaskToKill?.(task);
+                }
               }}
               className={`row__ ${
                 taskToKill?.processName === task.processName ? "kill-queue" : ""

@@ -2,7 +2,7 @@ import * as fs from "fs";
 import { exec } from "child_process";
 import path from "path";
 
-interface ProcessObj {
+export interface ProcessObj {
   Name: string;
   Pid: string;
   VmPeak: string;
@@ -16,7 +16,7 @@ interface ProcessObj {
   rawCpuTime: { utime: number; stime: number; timestamp: number };
 }
 
-interface Process {
+export interface Process {
   [key: string]: ProcessObj[] | number | boolean | string;
   memory: number;
   currSwap: number;

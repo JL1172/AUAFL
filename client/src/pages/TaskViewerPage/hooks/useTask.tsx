@@ -17,6 +17,8 @@ type useTaskHookType = {
   killProcess: (process: Process) => Promise<void>;
   setTaskToKill: React.Dispatch<React.SetStateAction<Process | null>>;
   taskToKill: Process | null;
+  loading: boolean;
+  taskKilled: boolean;
 };
 
 export const useTask = (): useTaskHookType => {
@@ -27,8 +29,10 @@ export const useTask = (): useTaskHookType => {
   const sendPreviousProcArr = useRef(false);
   const [taskToKill, setTaskToKill] = useState<Process | null>(null);
   const [viewFilters, setViewFilters] = useState(false);
+  const [loading,setLoading] = useState(false);
   const [filtersState, setFiltersState] = useState(["averageCpuTime", "desc"]);
   const filters = useRef(["averageCpuTime", "desc"]);
+  const [taskKilled, setTaskKilled] = useState(false);
   const axiosInsance = useMemo(() => {
     return AUAFLAxiosInstance.getInstance();
   }, []);
@@ -65,16 +69,25 @@ export const useTask = (): useTaskHookType => {
   );
   const killProcess = useCallback(
     async (process: Process) => {
+      setLoading(true);
       try {
-        await axiosInsance.patch("/kill-pid", process);
+        await axiosInsance.patch("/kill-process", process);
+        setTaskToKill(null);
+        setTaskKilled(true);
+        setTimeout(() => {setTaskKilled(false)}, 1000)
       } catch {
         console.error("Error killing process");
+        alert("Error killing process")
+      } finally {
+        setLoading(false);
       }
     },
     [axiosInsance]
   );
   return {
+    loading,
     fetchTasks,
+    taskKilled,
     watchStatus,
     setWatchStatus,
     tasks,
