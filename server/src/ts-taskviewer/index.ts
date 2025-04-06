@@ -2,9 +2,8 @@ import express, { NextFunction, Request, Response } from "express";
 import morgan from "morgan";
 import cors from "cors";
 import helmet from "helmet";
-import { viewTasks } from "./task-viewer.ts";
-import { killProcess } from "./kill-process.ts";
-
+import { killProcess } from "./kill-process/index.ts";
+import { viewTasks } from "./task-viewer/index.ts";
 const server = express();
 const port = 4000;
 

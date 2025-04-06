@@ -1,4 +1,5 @@
-import { Process, ProcessObj } from "./task-viewer.ts";
+import { Process, ProcessObj } from "../global-types/process-types.ts";
+
 export async function killProcess(
   processToKill: Process,
   retry: boolean = false

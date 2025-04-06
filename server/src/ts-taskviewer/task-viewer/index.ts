@@ -1,118 +1,15 @@
 import * as fs from "fs";
 import { exec } from "child_process";
 import path from "path";
+import { readStatusFile } from "./read-status-file.ts";
+import { viewRamTotal } from "./view-ram-total.ts";
+import { Process, ProcessObj } from "../global-types/process-types.ts";
 
-export interface ProcessObj {
-  Name: string;
-  Pid: string;
-  VmPeak: string;
-  VmRSS: string;
-  RssAnon: string;
-  Threads: string;
-  VmSize: string;
-  VmSwap: string;
-  cpuUtilization: number;
-  memoryUtilization: number;
-  rawCpuTime: { utime: number; stime: number; timestamp: number };
-}
 
-export interface Process {
-  [key: string]: ProcessObj[] | number | boolean | string;
-  memory: number;
-  currSwap: number;
-  currRam: number;
-  memPeakAverage: number;
-  averageCpuTime: number;
-  displayCpuTime: boolean;
-  averageThreads: number;
-  processName:string;
-}
 
-function computeCpuTime(pid: string) {
-  try {
-    const statFilePath = `/proc/${pid}/stat`;
-    const data = fs.readFileSync(statFilePath, { encoding: "utf-8" });
-    const fields = data.split(" ");
-    const utime = parseInt(fields[13]); // user mode time
-    const stime = parseInt(fields[14]); // kernel mode time
-    
-    return {
-      utime,
-      stime,
-      timestamp: Date.now(),
-    };
-  } catch (err) {
-    console.error(`Error computing CPU time for process ${pid}:`, err);
-    return null;
-  }
-}
 
-async function readStatusFile(
-  path: string,
-  pid: string,
-  arrToCompare: string[],
-  totalRamSize: number
-) {
-  try {
-    let found = arrToCompare?.length;
-    const map: any = {
-      Name: "",
-      Pid: "",
-      VmPeak: "",
-      VmRSS: "",
-      RssAnon: "",
-      VmSwap: "",
-      Threads: "",
-      VmSize: "",
-      memoryUtilization: 0,
-      cpuUtilization: 0,
-      rawCpuTime: null,
-    };
-    
-    (await fs.promises.readFile(path, { encoding: "utf-8" }))
-      ?.split("\n")
-      ?.forEach((n) => {
-        const lineSplit = n?.split(":");
-        if (lineSplit?.[0] && arrToCompare.includes(lineSplit[0]?.trim())) {
-          found--;
-          map[lineSplit[0]?.trim()] = lineSplit?.[1]
-            ?.replace(/\t/g, "")
-            ?.trim();
-        }
-      });
-      
-    if (found === 0) {
-      const cpuTimeResult = computeCpuTime(pid);
 
-      if (!cpuTimeResult) {
-        return null;
-      } else {
-        map.rawCpuTime = cpuTimeResult;
-        map.memoryUtilization = 
-          (parseInt(map.VmRSS?.split(" ")[0]) / totalRamSize) * 100;
-        return map;
-      }
-    }
-    return null;
-  } catch (err) {
 
-    return null;
-  }
-}
-
-async function viewRamTotal() {
-  try {
-    const meminfo = await fs.promises.readFile("/proc/meminfo", { encoding: "utf-8" });
-    return meminfo
-      ?.split("\n")?.[0]
-      ?.split(":")?.[1]
-      ?.replace(/\t/g, "")
-      ?.trim();
-  } catch (err) {
-    console.error("Error reading system memory files:", err);
-    return null;
-  }
-}
 
 async function viewTasks(previousProcArr?: Process[], filters?: string[]) {
   const computeCpuUtilization = Boolean(previousProcArr);
