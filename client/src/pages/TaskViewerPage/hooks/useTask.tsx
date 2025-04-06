@@ -71,7 +71,7 @@ export const useTask = (): useTaskHookType => {
     async (process: Process) => {
       setLoading(true);
       try {
-        await axiosInsance.patch("/kill-process", process);
+        await axiosInsance.patch("/kill-process", {processToKill:process});
         setTaskToKill(null);
         setTaskKilled(true);
         setTimeout(() => {setTaskKilled(false)}, 1000)
