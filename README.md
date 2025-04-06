@@ -49,4 +49,4 @@ A powerful, custom-built task manager for Linux with a modern GUI, real-time upd
 - Process prioritization (renice-style control)
 
 ## Installation
-Will be packing this for ubuntu installation.
+Will be packinging this for ubuntu installation.
