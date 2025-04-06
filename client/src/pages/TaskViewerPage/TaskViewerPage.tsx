@@ -5,6 +5,7 @@ import FilterContainer from "./components/FilterContainer";
 import ColumnNames from "./components/ColumnNames";
 import ProcessRows from "./components/ProcessRows";
 import TaskContainerHeader from "./components/TaskContainerHeader";
+import { CiCircleRemove } from "react-icons/ci";
 export interface ProcessObj {
   Name: string;
   Pid: string;
@@ -41,6 +42,9 @@ export default function TaskViewerPage() {
     setViewFilters,
     setFiltersState,
     renderHighlight,
+    taskToKill,
+    setTaskToKill,
+    killProcess,
   } = useTask();
   useEffect(() => {
     if (watchStatus) {
@@ -76,6 +80,42 @@ export default function TaskViewerPage() {
               filters={filters}
               setFiltersState={setFiltersState}
             />
+            <div
+              className={
+                taskToKill ? "render-task-kill-queue" : "hide-task-kill-queue"
+              }
+            >
+              <div className="task-to-kill-heading">
+                <h6>Task To Kill Queue</h6>
+                <div
+                  onClick={() => setTaskToKill(null)}
+                  className="remove-icon"
+                  title="Remove task from task kill queue"
+                >
+                  <CiCircleRemove
+                    style={{ width: "1.6rem", height: "1.6rem" }}
+                    color="green"
+                  />
+                </div>
+                <button onClick={() => {
+                  killProcess(taskToKill as Process);
+                }}>Kill Task</button>
+              </div>
+              {taskToKill && (
+                <ProcessRows
+                  renderOne={true}
+                  tasks={[
+                    tasks.find(
+                      (task) => task.processName === taskToKill.processName
+                    ) ?? taskToKill,
+                  ]}
+                  renderHighlight={renderHighlight}
+                  filtersState={filtersState}
+                  setTaskToKill={setTaskToKill}
+                  taskToKill={taskToKill}
+                />
+              )}
+            </div>
           </div>
           <div className="process-list">
             <ColumnNames
@@ -83,9 +123,12 @@ export default function TaskViewerPage() {
               renderHighlight={renderHighlight}
             />
             <ProcessRows
+              renderOne={false}
               tasks={tasks}
               renderHighlight={renderHighlight}
               filtersState={filtersState}
+              setTaskToKill={setTaskToKill}
+              taskToKill={taskToKill}
             />
           </div>
         </div>

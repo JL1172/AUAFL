@@ -13,7 +13,10 @@ type useTaskHookType = {
   filters: React.RefObject<string[]>;
   filtersState: string[];
   setFiltersState: (n: string[]) => void;
-  renderHighlight: (n:string,o:string,p:string) => string;
+  renderHighlight: (n: string, o: string, p: string) => string;
+  killProcess: (process: Process) => Promise<void>;
+  setTaskToKill: React.Dispatch<React.SetStateAction<Process | null>>;
+  taskToKill: Process | null;
 };
 
 export const useTask = (): useTaskHookType => {
@@ -22,6 +25,7 @@ export const useTask = (): useTaskHookType => {
   const intervalRef = useRef(-1);
   const previousTaskRef = useRef(null);
   const sendPreviousProcArr = useRef(false);
+  const [taskToKill, setTaskToKill] = useState<Process | null>(null);
   const [viewFilters, setViewFilters] = useState(false);
   const [filtersState, setFiltersState] = useState(["averageCpuTime", "desc"]);
   const filters = useRef(["averageCpuTime", "desc"]);
@@ -59,6 +63,16 @@ export const useTask = (): useTaskHookType => {
     },
     []
   );
+  const killProcess = useCallback(
+    async (process: Process) => {
+      try {
+        await axiosInsance.patch("/kill-pid", process);
+      } catch {
+        console.error("Error killing process");
+      }
+    },
+    [axiosInsance]
+  );
   return {
     fetchTasks,
     watchStatus,
@@ -71,5 +85,8 @@ export const useTask = (): useTaskHookType => {
     setFiltersState,
     filters,
     renderHighlight,
+    killProcess,
+    taskToKill, 
+    setTaskToKill,
   };
 };

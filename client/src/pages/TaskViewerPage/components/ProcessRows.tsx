@@ -1,14 +1,20 @@
 import { useMemo } from "react";
 import { Process, ProcessObj } from "../TaskViewerPage";
 interface Props {
-  renderHighlight: (n: string, o: string, p: string) => string;
-  filtersState: string[];
-  tasks: Process[];
+  renderHighlight?: (n: string, o: string, p: string) => string;
+  filtersState?: string[];
+  tasks?: Process[];
+  setTaskToKill?: React.Dispatch<React.SetStateAction<Process | null>>;
+  taskToKill?: Process | null;
+  renderOne: boolean;
 }
 export default function ProcessRows({
   renderHighlight,
   filtersState,
   tasks,
+  setTaskToKill,
+  taskToKill,
+  renderOne,
 }: Props) {
   const rowLayout = useMemo(() => {
     return [
@@ -18,12 +24,12 @@ export default function ProcessRows({
       },
       {
         hightLightKey: "memory",
-        presentation: (val: Process) => val?.memory?.toFixed(10),
+        presentation: (val: Process) => `${val?.memory?.toFixed(10)}%`,
       },
       {
         hightLightKey: "averageCpuTime",
         presentation: (val: Process) =>
-          val?.displayCpuTime && (val?.averageCpuTime ?? 0).toFixed(10),
+          val?.displayCpuTime && `${(val?.averageCpuTime ?? 0).toFixed(10)}%`,
       },
       {
         hightLightKey: "PID",
@@ -51,24 +57,53 @@ export default function ProcessRows({
 
   return (
     <>
-      {tasks.map((task, idx) => {
-        return <div className="row__" key={idx}>
+      {renderOne ? (
+        <div className="row__">
           {rowLayout.map((n, i) => {
             return (
               <div
                 key={i}
-                className={`field ${renderHighlight(
-                  filtersState[1],
-                  filtersState[0],
+                className={`field ${renderHighlight?.(
+                  filtersState?.[1] || "",
+                  filtersState?.[0] || "",
                   n?.hightLightKey
                 )}`}
               >
-                {n?.presentation(task)}
+                {n?.presentation(tasks?.[0] as Process)}
               </div>
             );
           })}
-        </div>;
-      })}
+        </div>
+      ) : (
+        tasks?.map((task, idx) => {
+          return (
+            <div
+              onClick={() => {
+                setTaskToKill?.(task);
+              }}
+              className={`row__ ${
+                taskToKill?.processName === task.processName ? "kill-queue" : ""
+              }`}
+              key={idx}
+            >
+              {rowLayout.map((n, i) => {
+                return (
+                  <div
+                    key={i}
+                    className={`field ${renderHighlight?.(
+                      filtersState?.[1] || "",
+                      filtersState?.[0] || "",
+                      n?.hightLightKey
+                    )}`}
+                  >
+                    {n?.presentation(task)}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })
+      )}
     </>
   );
 }

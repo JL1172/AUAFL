@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "./file-page.scss";
+import { useApp } from "../../context/AppSetupContext";
 export default function FilePage() {
+  const {appName} = useApp()!;
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event?.target?.files) {
@@ -21,7 +23,7 @@ export default function FilePage() {
         accept=".mp4,.mov,.webm,.png,.jpeg,.svg,.jpg"
       />
       <h1 className="logo">
-        {["A", "U", "A"]?.map((n: string, i) => (
+        {appName?.split("")?.map((n: string, i: number) => (
           <p key={i}> {n}</p>
         ))}
       </h1>
