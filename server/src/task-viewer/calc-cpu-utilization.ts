@@ -11,7 +11,7 @@ export function calculateAverageCpuUtilization(
     display_cpu_utilization_flag === true &&
     previous_process_arr?.length > 0
   ) {
-    const len = system_process_array.length;
+    const len = idx_tracker;
     for (let i = 0; i < len; i++) {
       const curr_proc: Process = system_process_array[i];
       const name_of_proc: string = curr_proc.processName;
@@ -90,10 +90,7 @@ export function calculateAverageCpuUtilization(
           const utilization_percentage =
             (cpu_time_diff / (clockTickRate * time_difference)) * 100;
 
-          curr_sub_proc.cpuUtilization = Math.max(
-            0,
-            Math.min(100, utilization_percentage)
-          );
+          curr_sub_proc.cpuUtilization = Math.max(0, utilization_percentage);
           total_cpu_utilization += curr_sub_proc.cpuUtilization;
           match_count++;
         }

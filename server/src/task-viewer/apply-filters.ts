@@ -1,4 +1,5 @@
-import { Process } from "../index.ts";
+import { Process } from "../types/process-types.ts";
+
 
 export function applyFilters(
   filters: string[] = null,

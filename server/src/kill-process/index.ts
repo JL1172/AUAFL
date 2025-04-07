@@ -1,4 +1,4 @@
-import { Process, ProcessObj } from "../global-types/process-types.ts";
+import { Process, ProcessObj } from "../types/process-types.ts";
 
 export async function killProcess(
   processToKill: Process,
@@ -12,25 +12,24 @@ export async function killProcess(
       processToKill.processName
     ] as ProcessObj[];
 
-    const proc_len = processList?.length;
+    if (!processList?.length) {
+      return "No processes found to kill";
+    }
+    const proc_len: number = processList?.length;
+    let failed_pids = 0;
     for (let i = 0; i < proc_len; i++) {
       const currPid = processList[i]?.Pid;
       try {
-        process.kill(+currPid, 0);
-        if (retry) {
-          process.kill(+currPid, "SIGKILL");
-        } else {
-          process.kill(+currPid, "SIGTERM");
-        }
+        const signal = retry ? "SIGKILL" : "SIGTERM";
+        process.kill(currPid, signal);
       } catch {
-        continue;
+        failed_pids++;
       }
     }
-    if (!retry) {
-      killProcess(processToKill, true);
-    } else {
-      return "All processes killed";
+    if (failed_pids > 0 && retry === false) {
+      return await killProcess(processToKill, true);
     }
+    return "Processes killed successfully";
   } catch {
     console.error("Error killing process");
     return;
