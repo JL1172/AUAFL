@@ -40,7 +40,7 @@
     },
     "linux": {
       "target": [
-        "deb", "AppImage"
+        "deb"
       ],
       "category": "Utility",
       "packageCategory": "utils",
