@@ -29,9 +29,12 @@ export const useTask = (): useTaskHookType => {
   const sendPreviousProcArr = useRef(false);
   const [taskToKill, setTaskToKill] = useState<Process | null>(null);
   const [viewFilters, setViewFilters] = useState(false);
-  const [loading,setLoading] = useState(false);
-  const [filtersState, setFiltersState] = useState(["averageCpuTime", "desc"]);
-  const filters = useRef(["averageCpuTime", "desc"]);
+  const [loading, setLoading] = useState(false);
+  const [filtersState, setFiltersState] = useState([
+    "totalCpuUtilization",
+    "desc",
+  ]);
+  const filters = useRef(["totalCpuUtilization", "desc"]);
   const [taskKilled, setTaskKilled] = useState(false);
   const axiosInsance = useMemo(() => {
     return AUAFLAxiosInstance.getInstance();
@@ -57,7 +60,11 @@ export const useTask = (): useTaskHookType => {
     }
   }, [axiosInsance]);
   const renderHighlight = useCallback(
-    (orderState: string, filterState: string, expectedFilterState: string) => {
+    (
+      orderState: string,
+      filterState: string,
+      expectedFilterState: string,
+    ) => {
       if (orderState === "desc" && filterState === expectedFilterState) {
         return "highlight";
       } else if (orderState === "asc" && filterState === expectedFilterState) {
@@ -71,13 +78,15 @@ export const useTask = (): useTaskHookType => {
     async (process: Process) => {
       setLoading(true);
       try {
-        await axiosInsance.patch("/kill-process", {processToKill:process});
+        await axiosInsance.patch("/kill-process", { processToKill: process });
         setTaskToKill(null);
         setTaskKilled(true);
-        setTimeout(() => {setTaskKilled(false)}, 1000)
+        setTimeout(() => {
+          setTaskKilled(false);
+        }, 1000);
       } catch {
         console.error("Error killing process");
-        alert("Error killing process")
+        alert("Error killing process");
       } finally {
         setLoading(false);
       }
@@ -99,7 +108,7 @@ export const useTask = (): useTaskHookType => {
     filters,
     renderHighlight,
     killProcess,
-    taskToKill, 
+    taskToKill,
     setTaskToKill,
   };
 };

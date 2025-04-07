@@ -25,13 +25,15 @@ export default function ProcessRows({
         presentation: (val: Process) => val.processName,
       },
       {
-        hightLightKey: "memory",
-        presentation: (val: Process) => `${val?.memory?.toFixed(10)}%`,
+        hightLightKey: "totalMemoryUtilization",
+        presentation: (val: Process) =>
+          `${val?.totalMemoryUtilization?.toFixed(2)}%`,
       },
       {
-        hightLightKey: "averageCpuTime",
+        hightLightKey: "totalCpuUtilization",
         presentation: (val: Process) =>
-          val?.displayCpuTime && `${(val?.averageCpuTime ?? 0).toFixed(10)}%`,
+          val?.displayCpuTime &&
+          `${(val?.totalCpuUtilization ?? 0).toFixed(2)}%`,
       },
       {
         hightLightKey: "PID",
@@ -40,19 +42,19 @@ export default function ProcessRows({
       },
       {
         hightLightKey: "Threads",
-        presentation: (val: Process) => val?.averageThreads ?? 0,
+        presentation: (val: Process) => val?.totalThreads ?? 0,
       },
       {
-        hightLightKey: "memPeakAverage",
-        presentation: (val: Process) => `${val?.memPeakAverage} KB`,
+        hightLightKey: "totalVmPeak",
+        presentation: (val: Process) => `${val?.totalVmPeak} KB`,
       },
       {
-        hightLightKey: "currRam",
-        presentation: (val: Process) => `${val?.currRam} KB`,
+        hightLightKey: "totalVmRSS",
+        presentation: (val: Process) => `${val?.totalVmRSS} KB`,
       },
       {
-        hightLightKey: "currSwap",
-        presentation: (val: Process) => `${val?.currSwap} KB`,
+        hightLightKey: "totalSwap",
+        presentation: (val: Process) => `${val?.totalSwap} KB`,
       },
     ];
   }, []);
@@ -60,7 +62,16 @@ export default function ProcessRows({
   return (
     <>
       {renderOne ? (
-        <div className="row__">
+        <div
+          title={
+            (tasks?.[0] as Process)?.isSystemProcess
+              ? "This is a system process"
+              : ""
+          }
+          className={`row__ ${
+            (tasks?.[0] as Process)?.isSystemProcess ? "system-proc" : ""
+          }`}
+        >
           {rowLayout.map((n, i) => {
             return (
               <div
@@ -80,6 +91,11 @@ export default function ProcessRows({
         tasks?.map((task, idx) => {
           return (
             <div
+            title={
+              (task as Process)?.isSystemProcess
+                ? "This is a system process"
+                : ""
+            }
               onClick={() => {
                 if (!loading) {
                   setTaskToKill?.(task);
@@ -87,7 +103,7 @@ export default function ProcessRows({
               }}
               className={`row__ ${
                 taskToKill?.processName === task.processName ? "kill-queue" : ""
-              }`}
+              } ${(task as Process)?.isSystemProcess ? "system-proc" : ""}`}
               key={idx}
             >
               {rowLayout.map((n, i) => {

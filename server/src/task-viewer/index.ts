@@ -1,5 +1,5 @@
 import { Process, ProcessObj } from "../types/process-types.ts";
-import { calculateAverageCpuUtilization } from "./calc-cpu-utilization.ts";
+import { calculateCpuUtilization } from "./calc-cpu-utilization.ts";
 import { applyFilters } from "./apply-filters.ts";
 import { readAndParseProcessStatFile } from "./parse-process-file.ts";
 import { viewRamTotal } from "./view-ram-total.ts";
@@ -10,7 +10,6 @@ function log(log: string, persist_process?: boolean) {
   console.error(log);
   if (!persist_process) return;
 }
-
 
 async function view_system_processes(
   filters: string[],
@@ -37,7 +36,9 @@ async function view_system_processes(
       "Threads",
       "VmSize",
       "VmSwap",
+      "Uid",
     ] as const;
+
     const expectedCount = expectedProcessFields?.length;
 
     //process directories
@@ -66,37 +67,26 @@ async function view_system_processes(
         //no unnecessary copies
         const indexOfName = index_map[Name];
         const process = system_process_array[indexOfName];
-        const inner_proc_arr_len: number =
-          (process[Name] as ProcessObj[])?.length + 1;
         const new_proc = processData;
         (process[Name] as ProcessObj[]).push(new_proc);
-        process.currRam = Math.floor(
-          (process.currRam + processData.VmRSS) / inner_proc_arr_len
-        );
-        process.currSwap = Math.floor(
-          (process.currRam + processData.VmSwap) / inner_proc_arr_len
-        );
-        process.memory = Math.floor(
-          (process.memory + processData.memoryUtilization) / inner_proc_arr_len
-        );
-        process.memPeakAverage = Math.floor(
-          (process.memPeakAverage + processData.VmPeak) / inner_proc_arr_len
-        );
-        process.averageThreads = Math.floor(
-          (process.averageThreads + processData.Threads) / inner_proc_arr_len
-        );
+        process.totalVmRSS += processData.VmRSS;
+        process.totalSwap += processData.VmSwap;
+        process.totalMemoryUtilization += processData.memoryUtilization;
+        process.totalVmPeak += processData.VmPeak;
+        process.totalThreads += processData.Threads;
       } else {
         const processToConstruct: Process = {
           [Name]: [processData],
           PidToDisplay: processData.Pid,
           processName: Name,
-          averageCpuTime: 0,
-          averageThreads: processData.Threads,
-          currRam: processData.VmRSS,
-          currSwap: processData.VmSwap,
-          memPeakAverage: processData.VmPeak,
+          totalCpuUtilization: 0,
+          totalThreads: processData.Threads,
+          totalVmRSS: processData.VmRSS,
+          totalSwap: processData.VmSwap,
+          totalVmPeak: processData.VmPeak,
           displayCpuTime: display_cpu_utilization_flag,
-          memory: processData.memoryUtilization,
+          totalMemoryUtilization: processData.memoryUtilization,
+          isSystemProcess: processData.isSystemProcess,
         };
         system_process_array[idx_tracker] = processToConstruct;
         index_map[Name] = idx_tracker;
@@ -107,7 +97,7 @@ async function view_system_processes(
     system_process_array.length = idx_tracker;
 
     //cpu calculations
-    calculateAverageCpuUtilization(
+    calculateCpuUtilization(
       clockTickRate,
       display_cpu_utilization_flag,
       previous_process_arr,
@@ -125,4 +115,4 @@ async function view_system_processes(
   }
 }
 
-export {view_system_processes};
+export { view_system_processes };

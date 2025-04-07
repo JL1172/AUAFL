@@ -1,6 +1,7 @@
 import { CiCircleRemove } from "react-icons/ci";
 import { Process } from "../TaskViewerPage";
 import ProcessRows from "./ProcessRows";
+import { IoWarningOutline } from "react-icons/io5";
 interface Props {
   renderHighlight?: (n: string, o: string, p: string) => string;
   filtersState?: string[];
@@ -21,7 +22,9 @@ export default function KillTaskQueue({
 }: Props) {
   return (
     <div
-      className={taskToKill ? "render-task-kill-queue" : "hide-task-kill-queue"}
+      className={`${
+        taskToKill ? "render-task-kill-queue" : "hide-task-kill-queue"
+      }`}
     >
       <div className="task-to-kill-heading">
         <h6>Task To Kill Queue</h6>
@@ -50,6 +53,9 @@ export default function KillTaskQueue({
         >
           Kill Task
         </button>
+        {(tasks?.find(
+              (task) => task.processName === taskToKill?.processName
+            ) ?? taskToKill)?.isSystemProcess && <span className="warning"><IoWarningOutline style={{height: "1.5rem", width: "1.5rem", color: "red"}} /> Warning, this process is a system process</span>}
       </div>
       {taskToKill && (
         <ProcessRows

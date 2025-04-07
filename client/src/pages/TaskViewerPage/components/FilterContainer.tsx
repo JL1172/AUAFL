@@ -23,27 +23,27 @@ export default function FilterContainer({
       {
         label: "Memory %",
         radioGroup: "filter",
-        value: "memory",
+        value: "totalMemoryUtilization",
       },
       {
         label: "CPU %",
         radioGroup: "filter",
-        value: "averageCpuTime",
+        value: "totalCpuUtilization",
       },
       {
         label: "VmSwap",
         radioGroup: "filter",
-        value: "currSwap",
+        value: "totalSwap",
       },
       {
         label: "VmPeak",
         radioGroup: "filter",
-        value: "memPeakAverage",
+        value: "totalVmPeak",
       },
       {
         label: "VmRSS",
         radioGroup: "filter",
-        value: "currRam",
+        value: "totalVmRSS",
       },
       {
         label: "Desc",

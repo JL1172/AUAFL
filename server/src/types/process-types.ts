@@ -14,17 +14,20 @@ export interface rawCpuTimeObj {
     cpuUtilization: number;
     memoryUtilization: number;
     rawCpuTime: rawCpuTimeObj | null;
+    isSystemProcess: boolean;
+    Uid: string;
   }
   
   export interface Process {
     [key: string]: ProcessObj[] | number | boolean | string;
-    memory: number;
-    currSwap: number;
-    currRam: number;
+    totalMemoryUtilization: number;
+    totalSwap: number;
+    totalVmRSS: number;
     PidToDisplay: number;
-    memPeakAverage: number;
-    averageCpuTime: number;
+    totalVmPeak: number;
+    totalCpuUtilization: number;
     displayCpuTime: boolean;
-    averageThreads: number;
+    totalThreads: number;
     processName: string;
+    isSystemProcess: boolean;
   }

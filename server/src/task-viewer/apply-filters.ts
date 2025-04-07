@@ -12,7 +12,7 @@ export function applyFilters(
         system_process_array.sort((a, b) => {
           const name = a.processName;
           const name2 = b.processName;
-          return name < name2 ? 1 : -1;
+          return name < name2 ? -1 : 1;
         });
       } else {
         system_process_array.sort((a, b) => {
@@ -24,7 +24,7 @@ export function applyFilters(
         system_process_array.sort((a, b) => {
           const name = a.processName;
           const name2 = b.processName;
-          return name2 < name ? 1 : -1;
+          return name2 < name ? -1 : 1;
         });
       } else {
         system_process_array.sort((a, b) => {

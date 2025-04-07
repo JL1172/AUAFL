@@ -1,6 +1,6 @@
 import { Process, ProcessObj } from "../types/process-types.ts";
 
-export function calculateAverageCpuUtilization(
+export function calculateCpuUtilization(
   clockTickRate: number,
   display_cpu_utilization_flag: boolean,
   previous_process_arr: Process[] = [],
@@ -30,10 +30,9 @@ export function calculateAverageCpuUtilization(
         name_of_proc
       ] as ProcessObj[];
 
-      let total_cpu_utilization = 0;
-      let match_count = 0;
-
       const curr_proc_len: number = current_processses?.length;
+
+      let total_cpu_utilization = 0;
 
       for (let j = 0; j < curr_proc_len; j++) {
         const curr_sub_proc: ProcessObj = current_processses[j];
@@ -90,13 +89,11 @@ export function calculateAverageCpuUtilization(
           const utilization_percentage =
             (cpu_time_diff / (clockTickRate * time_difference)) * 100;
 
+            total_cpu_utilization += utilization_percentage;
           curr_sub_proc.cpuUtilization = Math.max(0, utilization_percentage);
-          total_cpu_utilization += curr_sub_proc.cpuUtilization;
-          match_count++;
+          curr_proc.totalCpuUtilization = total_cpu_utilization;
         }
       }
-      curr_proc.averageCpuTime =
-        match_count > 0 ? total_cpu_utilization / match_count : 0;
       curr_proc.displayCpuTime = true;
     }
   }

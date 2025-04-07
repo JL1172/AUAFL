@@ -6,28 +6,38 @@ import ColumnNames from "./components/ColumnNames";
 import ProcessRows from "./components/ProcessRows";
 import TaskContainerHeader from "./components/TaskContainerHeader";
 import KillTaskQueue from "./components/KillTaskQueue";
+export interface rawCpuTimeObj {
+  utime: number;
+  stime: number;
+  timestamp: number;
+}
 export interface ProcessObj {
   Name: string;
-  Pid: string;
-  VmPeak: string;
-  VmRSS: string;
-  RssAnon: string;
-  Threads: string;
-  VmSize: string;
-  VmSwap: string;
+  Pid: number;
+  VmPeak: number;
+  VmRSS: number;
+  Threads: number;
+  VmSize: number;
+  VmSwap: number;
   cpuUtilization: number;
-  memoryUtilization: string;
+  memoryUtilization: number;
+  rawCpuTime: rawCpuTimeObj | null;
+  isSystemProcess: boolean;
+  Uid: string;
 }
+
 export interface Process {
   [key: string]: ProcessObj[] | number | boolean | string;
-  memory: number;
-  currSwap: number;
-  currRam: number;
-  memPeakAverage: number;
-  averageCpuTime: number;
+  totalMemoryUtilization: number;
+  totalSwap: number;
+  totalVmRSS: number;
+  PidToDisplay: number;
+  totalVmPeak: number;
+  totalCpuUtilization: number;
   displayCpuTime: boolean;
-  averageThreads: number;
+  totalThreads: number;
   processName: string;
+  isSystemProcess: boolean;
 }
 export default function TaskViewerPage() {
   const {

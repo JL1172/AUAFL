@@ -7,12 +7,20 @@
     justify-content: center;
     align-items: center;
 
+    .warning {
+        display: flex;
+        align-items: center;
+        font-family: Roboto;
+        font-weight: 700;
+        gap: 5px;
+    }
+
     .highlight {
-        background-color: rgba(207, 119, 119, 0.349);
+        background-color: rgba(252, 199, 199, 0.493);
     }
 
     .highlight-green {
-        background-color: rgba(144, 238, 144, 0.562);
+        background-color: rgba(187, 236, 187, 0.562);
     }
 
     .task-container {
@@ -185,6 +193,7 @@
                 display: flex;
                 flex-direction: column;
                 height: 150px;
+                overflow: auto;
                 background-color: rgba(219, 219, 219, 0.808);
 
                 .task-to-kill-heading {
@@ -193,12 +202,15 @@
                     display: flex;
                     padding-left: 5px;
                     gap: 20px;
-                   .remove-icon {
-                    cursor: pointer;
-button {
-    font-family: Roboto;
-}
-                   } 
+
+                    .remove-icon {
+                        cursor: pointer;
+
+                        button {
+                            font-family: Roboto;
+                        }
+                    }
+
                     h6 {
                         font-size: 20px;
                         font-family: Roboto;
@@ -259,6 +271,7 @@ button {
                     }
 
                 }
+
                 transform: scaleY(100%);
                 transform-origin: top;
                 opacity: 1;
@@ -266,21 +279,24 @@ button {
             }
 
             .hide-task-kill-queue {
-                
+
                 .task-to-kill-heading {
                     align-items: center;
                     display: flex;
-                    
+
                     background-color: white;
+
                     h6 {
                         font-size: 20px;
                         font-family: Roboto;
                         font-weight: 700;
                         opacity: 0;
                     }
+
                     height: 0;
                     opacity: 0;
                 }
+
                 .row__ {
 
                     display: flex;
@@ -333,6 +349,7 @@ button {
                     }
 
                 }
+
                 transform: scaleY(0%);
                 transform-origin: top;
                 height: 0px;
@@ -398,7 +415,7 @@ button {
 
                 &:hover {
                     transition: .1s ease-in-out;
-                    background-color: rgb(194, 204, 224);
+                    background-color: rgb(231, 231, 231);
                 }
 
                 .field {
@@ -447,5 +464,14 @@ button {
         }
     }
 
+    .system-proc {
+        background-color: rgb(151, 60, 255) !important;
+        color: white;
+        border-color: rgb(89, 17, 172) !important;
+    }
+
+    .bolden {
+        font-weight: 1000 !important;
+    }
 
 }

@@ -1,12 +1,12 @@
 import { useMemo } from "react";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 interface Props {
   filtersState: string[];
-  renderHighlight: (n:string,o:string,p:string) => string;
+  renderHighlight: (n: string, o: string, p: string) => string;
 }
 
 export default function ColumnNames({ filtersState, renderHighlight }: Props) {
-  
   const colNames = useMemo(() => {
     return [
       {
@@ -16,59 +16,72 @@ export default function ColumnNames({ filtersState, renderHighlight }: Props) {
       },
       {
         label: "Memory %",
-        key: "memory",
+        key: "totalMemoryUtilization",
         tooltip:
-          "The average memory utilization percentage of VmRSS and the physical RAM size across all processes with this name",
+          "The total memory utilization of VmRSS and the physical RAM size across all processes with this name.",
       },
       {
         label: "CPU %",
-        key: "averageCpuTime",
-        tooltip:
-          "The average CPU utilization across all processes with this name. Each process's CPU utilization is individually calculated then averaged.",
+        key: "totalCpuUtilization",
+        tooltip: "The CPU utilization across all processes with this name.",
       },
       { label: "PID", key: "", tooltip: "Process ID" },
       {
         label: "Threads",
-        key: "Threads",
-        tooltip:"The number of concurrent workers or execution paths spawned by this task. Useful for identifying parallel or multi-step operations."
+        key: "totalThreads",
+        tooltip:
+          "The number of concurrent workers or execution paths spawned by this task. Useful for identifying parallel or multi-step operations.",
       },
       {
         label: "VmPeak",
-        key: "memPeakAverage",
+        key: "totalVmPeak",
         tooltip:
           "Peak virtual memory used by the task (includes all mapped memory, even if not resident). Useful for detecting memory spikes.",
       },
       {
         label: "VmRSS",
-        key: "currRam",
+        key: "totalVmRSS",
         tooltip:
           "Resident Set Size—actual physical memory used (RAM currently occupied).",
       },
       {
         label: "VmSwap",
-        key: "currSwap",
+        key: "totalSwap",
         tooltip:
           "Amount of virtual memory swapped out to disk. High values may indicate memory pressure or poor performance.",
       },
     ];
   }, []);
   return (
-      <div className="col-names">
-        {colNames?.map((n, i) => {
-          return (
-            <h6
-              key={i}
-              className={`${renderHighlight(
-                filtersState[1],
-                filtersState[0],
-                n?.key
-              )}`}
-              title={n?.tooltip}
-            >
-                {n?.label}
-            </h6>
-          );
-        })}
-      </div>
+    <div className="col-names">
+      {colNames?.map((n, i) => {
+        return (
+          <h6
+            key={i}
+            className={`${renderHighlight(
+              filtersState[1],
+              filtersState[0],
+              n?.key
+            )} ${
+              renderHighlight(filtersState[1], filtersState[0], n?.key)
+                ? "bolden"
+                : ""
+            } `}
+            title={n?.tooltip}
+          >
+            {n?.label}
+            {renderHighlight(filtersState[1], filtersState[0], n?.key) ===
+            "highlight" ? (
+              <FaChevronDown />
+            ) : renderHighlight(filtersState[1], filtersState[0], n?.key) ===
+              "highlight-green" ? (
+              <FaChevronUp />
+            ) : (
+              ""
+            )}
+          </h6>
+        );
+      })}
+    </div>
   );
 }

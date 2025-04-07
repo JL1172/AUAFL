@@ -1,6 +1,6 @@
 import { ProcessObj } from "../types/process-types.ts";
 import { computeRawCpuTime } from "./compute-raw-cpu-time.ts";
-import fs from 'fs';
+import fs from "fs";
 export async function readAndParseProcessStatFile(
   pathToStatFile: string,
   pid: number,
@@ -20,6 +20,8 @@ export async function readAndParseProcessStatFile(
       cpuUtilization: 0,
       memoryUtilization: 0,
       rawCpuTime: null,
+      isSystemProcess: false,
+      Uid: "",
     };
     (await fs.promises.readFile(pathToStatFile, { encoding: "utf-8" }))
       ?.split("\n")
@@ -31,15 +33,20 @@ export async function readAndParseProcessStatFile(
           .trim()
           .split(" ");
 
-        const result: boolean = expectedProcessFields.some(
-          (field) => field === currentKeyInLine
-        );
+        const result: boolean = expectedProcessFields.some((field) => {
+          return field === currentKeyInLine;
+        });
         if (result === true) {
-          if (currentKeyInLine !== "Name") {
+          if (currentKeyInLine !== "Name" && currentKeyInLine !== "Uid") {
             processObj[currentKeyInLine] = +currentValueInLine?.[0];
             expectedCount--;
           } else if (currentKeyInLine === "Name") {
             processObj[currentKeyInLine] = currentValueInLine?.[0];
+            expectedCount--;
+          } else if (currentKeyInLine === "Uid" && !processObj.Uid) {
+            processObj.Uid = currentValueInLine?.[0];
+            processObj.isSystemProcess =
+              currentValueInLine?.[0]?.startsWith("0");
             expectedCount--;
           }
         }
