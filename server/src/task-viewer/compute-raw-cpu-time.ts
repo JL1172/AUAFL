@@ -1,6 +1,6 @@
-import { rawCpuTimeObj } from "../types/process-types.ts";
-import fs from 'fs';
-export function computeRawCpuTime(statFilePath: string): rawCpuTimeObj {
+import { rawCpuTimeObj } from "../types/process-types.js";
+import * as fs from 'fs';
+export function computeRawCpuTime(statFilePath: string): rawCpuTimeObj | null {
   try {
     const res = fs
       .readFileSync(statFilePath, { encoding: "utf-8" })

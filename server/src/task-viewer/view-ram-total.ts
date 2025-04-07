@@ -1,5 +1,5 @@
-import fs from 'fs';
-export function viewRamTotal() {
+import * as fs from 'fs';
+export function viewRamTotal(): number | null {
   try {
     const ramTotal = +fs
       .readFileSync("/proc/meminfo", { encoding: "utf-8" })

@@ -1,4 +1,4 @@
-import { Process, ProcessObj } from "../types/process-types.ts";
+import { Process, ProcessObj } from "../types/process-types.js";
 
 export function calculateCpuUtilization(
   clockTickRate: number,
@@ -18,7 +18,7 @@ export function calculateCpuUtilization(
 
       if (!name_of_proc) continue;
 
-      const previous_proc: Process = previous_process_arr?.find(
+      const previous_proc: Process | undefined = previous_process_arr?.find(
         (proc) => name_of_proc in proc
       );
       if (!previous_proc) continue;
@@ -36,7 +36,7 @@ export function calculateCpuUtilization(
 
       for (let j = 0; j < curr_proc_len; j++) {
         const curr_sub_proc: ProcessObj = current_processses[j];
-        const prev_matching_sub_proc: ProcessObj = previous_processes.find(
+        const prev_matching_sub_proc: ProcessObj | undefined = previous_processes.find(
           (old_proc) => old_proc.Pid === curr_sub_proc.Pid
         );
         /**

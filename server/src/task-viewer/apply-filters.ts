@@ -1,8 +1,8 @@
-import { Process } from "../types/process-types.ts";
+import { Process } from "../types/process-types.js";
 
 
 export function applyFilters(
-  filters: string[] = null,
+  filters: string[] | null= null,
   system_process_array: Process[]
 ) {
   if (filters) {

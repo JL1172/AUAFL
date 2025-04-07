@@ -1,12 +1,16 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "esModuleInterop": true,
-    "outDir": "./dist",
-    "noEmit": true,
-    "allowImportingTsExtensions":true
-    // other settings...
-  }
+    "target": "ES2020",                          // Modern JS target
+    "module": "NodeNext",                        // For ESM support in Node
+    "moduleResolution": "NodeNext",              // Works with "module": "NodeNext"
+    "outDir": "../dist-server",                            // Output compiled files here
+    "rootDir": "src",                            // All source files live here
+    "esModuleInterop": true,                     // Makes `import express from 'express'` work
+    "allowImportingTsExtensions": false,          // If you're importing .ts files explicitly
+    "strict": true,                              // Enables all strict type-checking
+    "skipLibCheck": true,                        // Faster builds, skips type checking in node_modules
+    "forceConsistentCasingInFileNames": true     // Catches casing errors on import
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
 }

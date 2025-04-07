@@ -59,9 +59,9 @@ export default function TaskViewerPage() {
   } = useTask();
   useEffect(() => {
     if (watchStatus) {
-      intervalRef.current = setInterval(() => {
+      intervalRef.current = Number(setInterval(() => {
         fetchTasks();
-      }, 1000);
+      }, 1000));
     } else if (intervalRef.current !== -1) {
       clearInterval(intervalRef.current);
     }

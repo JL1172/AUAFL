@@ -1,6 +1,6 @@
 import { exec } from "child_process";
 
-export async function viewClockTickRate(): Promise<number> {
+export async function viewClockTickRate(): Promise<number | null>  {
   try {
     return await new Promise((resolve, reject) => {
       exec("getconf CLK_TCK", (err, stdout) => {

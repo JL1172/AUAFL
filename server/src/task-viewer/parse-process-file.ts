@@ -1,13 +1,13 @@
-import { ProcessObj } from "../types/process-types.ts";
-import { computeRawCpuTime } from "./compute-raw-cpu-time.ts";
-import fs from "fs";
+import { ProcessObj } from "../types/process-types.js";
+import { computeRawCpuTime } from "./compute-raw-cpu-time.js";
+import * as fs from "fs";
 export async function readAndParseProcessStatFile(
   pathToStatFile: string,
   pid: number,
   expectedProcessFields: string[],
   expectedCount: number,
   ramTotal: number
-) {
+): Promise<ProcessObj | null> {
   try {
     const processObj: ProcessObj = {
       Name: "",
@@ -23,11 +23,13 @@ export async function readAndParseProcessStatFile(
       isSystemProcess: false,
       Uid: "",
     };
+
     (await fs.promises.readFile(pathToStatFile, { encoding: "utf-8" }))
       ?.split("\n")
       ?.map((n) => {
         const currentLineInStatFile: string[] = n?.split(":");
-        const currentKeyInLine: string = currentLineInStatFile?.[0].trim();
+        const currentKeyInLine =
+          currentLineInStatFile?.[0].trim() as keyof ProcessObj;
         const currentValueInLine: string[] = currentLineInStatFile?.[1]
           ?.replace(/\t/g, "")
           .trim()
@@ -38,7 +40,7 @@ export async function readAndParseProcessStatFile(
         });
         if (result === true) {
           if (currentKeyInLine !== "Name" && currentKeyInLine !== "Uid") {
-            processObj[currentKeyInLine] = +currentValueInLine?.[0];
+            (processObj[currentKeyInLine] as any) = +currentValueInLine?.[0];
             expectedCount--;
           } else if (currentKeyInLine === "Name") {
             processObj[currentKeyInLine] = currentValueInLine?.[0];

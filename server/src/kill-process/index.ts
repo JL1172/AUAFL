@@ -1,4 +1,4 @@
-import { Process, ProcessObj } from "../types/process-types.ts";
+import { Process, ProcessObj } from "../types/process-types.js";
 
 export async function killProcess(
   processToKill: Process,
