@@ -34,31 +34,40 @@ function createWindow() {
 
 function startBackend() {
   let backendScript: string;
-  const command = isDev() ? "tsx" : "node";
+  let command = isDev() ? "tsx" : "node";
 
   if (isDev()) {
     backendScript = path.resolve(__dirname, "..", "server", "src", "index.ts");
   } else {
-    const basePath = process.resourcesPath;
-    const unpackedBackendPath = path.join(
-      basePath,
-      "app.asar.unpacked",
-      "dist-server",
-      "index.js"
-    );
+    // const basePath = process.resourcesPath;
+    // const unpackedBackendPath = path.join(
+    //   basePath,
+    //   "app.asar.unpacked",
+    //   "dist-server",
+    //   "index.js"
+    // );
 
-    backendScript = existsSync(unpackedBackendPath)
-      ? unpackedBackendPath
-      : path.join(__dirname, "..", "dist-server", "index.js");
+    // backendScript = existsSync(unpackedBackendPath)
+    //   ? unpackedBackendPath
+    //   : path.join(__dirname, "..", "dist-server", "index.js");
 
-    console.log("Starting backend from:", backendScript);
-    console.log("File exists:", existsSync(backendScript));
+    // console.log("Starting backend from:", backendScript);
+    // console.log("File exists:", existsSync(backendScript));
+    // const possibleNodePaths = [
+    //   "/usr/bin/node",
+    //   "/usr/local/bin/node",
+    //   path.join(process.resourcesPath, "node"),
+    // ];
+    // command = possibleNodePaths.find((p) => existsSync(p)) || "node";
+    command = "/home/jacoblang/.nvm/versions/node/v23.3.0/bin/node";
+    backendScript =
+      "/opt/AUAFL/resources/app.asar.unpacked/dist-server/index.js";
   }
 
   console.log(`Spawning ${command} with script ${backendScript}`);
 
-  backendProcess = spawn(command, [backendScript], { 
-    stdio: "inherit"
+  backendProcess = spawn(command, [backendScript], {
+    stdio: "inherit",
   });
 
   backendProcess.on("error", (error) => {

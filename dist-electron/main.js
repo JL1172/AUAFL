@@ -37,7 +37,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const path = __importStar(require("path"));
 const child_process_1 = require("child_process");
-const fs_1 = require("fs");
 let mainWindow = null;
 let backendProcess = null;
 function isDev() {
@@ -64,22 +63,36 @@ function createWindow() {
 }
 function startBackend() {
     let backendScript;
-    const command = isDev() ? "tsx" : "node";
+    let command = isDev() ? "tsx" : "node";
     if (isDev()) {
         backendScript = path.resolve(__dirname, "..", "server", "src", "index.ts");
     }
     else {
-        const basePath = process.resourcesPath;
-        const unpackedBackendPath = path.join(basePath, "app.asar.unpacked", "dist-server", "index.js");
-        backendScript = (0, fs_1.existsSync)(unpackedBackendPath)
-            ? unpackedBackendPath
-            : path.join(__dirname, "..", "dist-server", "index.js");
-        console.log("Starting backend from:", backendScript);
-        console.log("File exists:", (0, fs_1.existsSync)(backendScript));
+        // const basePath = process.resourcesPath;
+        // const unpackedBackendPath = path.join(
+        //   basePath,
+        //   "app.asar.unpacked",
+        //   "dist-server",
+        //   "index.js"
+        // );
+        // backendScript = existsSync(unpackedBackendPath)
+        //   ? unpackedBackendPath
+        //   : path.join(__dirname, "..", "dist-server", "index.js");
+        // console.log("Starting backend from:", backendScript);
+        // console.log("File exists:", existsSync(backendScript));
+        // const possibleNodePaths = [
+        //   "/usr/bin/node",
+        //   "/usr/local/bin/node",
+        //   path.join(process.resourcesPath, "node"),
+        // ];
+        // command = possibleNodePaths.find((p) => existsSync(p)) || "node";
+        command = "/home/jacoblang/.nvm/versions/node/v23.3.0/bin/node";
+        backendScript =
+            "/opt/AUAFL/resources/app.asar.unpacked/dist-server/index.js";
     }
     console.log(`Spawning ${command} with script ${backendScript}`);
     backendProcess = (0, child_process_1.spawn)(command, [backendScript], {
-        stdio: "inherit"
+        stdio: "inherit",
     });
     backendProcess.on("error", (error) => {
         console.error("Failed to start backend process:", error);
