@@ -7,6 +7,7 @@ A powerful, custom-built task manager for Linux with a modern GUI, real-time upd
 ## Features
 
 - **Real-Time Process Monitoring**
+
   - Displays CPU utilization and memory metrics such as:
     - `VmRSS`
     - `VmSwap`
@@ -15,16 +16,19 @@ A powerful, custom-built task manager for Linux with a modern GUI, real-time upd
   - Constantly polls data every second for up-to-date information.
 
 - **Smart Process Aggregation**
+
   - Groups processes by name and averages memory/thread statistics across matching PIDs.
   - Ideal for tracking performance of multi-process applications (e.g., Chrome).
 
 - **Sorting and Filtering**
+
   - Dynamically sort processes ascending or descending by:
     - CPU utilization
     - Memory usage (`VmRSS`, `VmSwap`, `VmPeak`)
     - Thread count
 
 - **Process Termination**
+
   - Gracefully terminate processes using `SIGTERM`
   - Forcefully kill unresponsive processes with `SIGKILL`
   - Terminates all grouped PIDs under a process name for complete cleanup
@@ -49,4 +53,20 @@ A powerful, custom-built task manager for Linux with a modern GUI, real-time upd
 - Process prioritization (renice-style control)
 
 ## Installation
-Will be packinging this for ubuntu installation.
+
+#### ****Build it locally:***
+
+**Run**
+
+```
+npm run package
+
+sudo dpkg -i auafl-1.0.0.deb
+
+auafl
+```
+
+
+> [!IMPORTANT]
+> You will now have an application on your desktop called *AUAFL*
+
