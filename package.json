@@ -7,49 +7,56 @@
     "build:client": "cd client && vite build",
     "build:server": "cd server && npm run build",
     "build:electron": "tsc -p tsconfig.electron.json",
-    "build:all": "npm run build:client && npm run build:server && npm run build:electron",
-    "start:react:dev": "cd client && vite",
-    "start:electron:dev": "NODE_ENV='development' electron --no-sandbox .",
-    "start:electron:prod": "electron --no-sandbox .",
-    "start:dev": "concurrently \"npm run start:react:dev\" \"npm run start:electron:dev\"",
-    "start": "npm run build:all && npm run start:electron:prod",
-      "package": "electron-builder build --publish never"
+    "build:all:unpackaged": "npm run build:client && npm run build:server && npm run build:electron",
+    "build:all:packaged": "npm run build:client && node build-scripts/build-server.js && npm run build:electron",
+    "start:dev": "concurrently \"cd client && vite\" \"NODE_ENV='development' electron --no-sandbox .\"",
+    "start:prod": "tsx build-scripts/start-prod && npm run build:all:unpackaged && NODE_ENV='prod:pre-packaged' electron --no-sandbox .",
+    "package": "tsx build-scripts/start-prod && npm run build:all:packaged && NODE_ENV='production' electron-builder build --publish never"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/electron": "^1.4.38",
+    "@types/express": "^5.0.1",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.14.0",
     "concurrently": "^7.0.0",
     "electron": "^35.1.4",
     "electron-builder": "^26.0.12",
-    "tsx": "^4.19.3"
+    "esbuild": "^0.25.2",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
   },
-  "build": {
-    "productName": "AUAFL",
-    "appId": "com.jl1172.auafl",
-    "files": [
-      "dist/**/*",
-      "dist-client/**/*",
-      "dist-server/**/*",
-      "dist-electron/**/*",
-      "node_modules/**/*"
-    ],
-    "directories": {
-      "output": "release"
-    },
-    "linux": {
-      "target": [
-        "deb"
-      ],
-      "category": "Utility",
-      "packageCategory": "utils",
-      "maintainer": "Jacob github: JL1172",
-      "description": "Task Manager Application",
-      "synopsis": "Monitor and manage system processes",
-      "artifactName": "auafl-${version}.${ext}"
-    }
+"build": {
+  "productName": "AUAFL",
+  "appId": "com.jl1172.auafl",
+  "icon":"./auafl.png",
+  "asarUnpack": [
+    "dist-server/**/*"
+  ],
+  "files": [
+    "dist-client/**/*",
+    "dist-server/**/*", 
+    "dist-electron/**/*",
+    "package.json"
+  ],
+  "directories": {
+    "output": "release"
   },
+  "linux": {
+    "target": ["deb"],
+    "category": "Utility",
+    "packageCategory": "utils",
+    "maintainer": "Jacob github: JL1172",
+    "description": "Task Manager Application",
+    "synopsis": "Monitor and manage system processes",
+    "artifactName": "auafl-${version}.${ext}"
+  }
+},
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",

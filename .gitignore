@@ -138,6 +138,6 @@ dist
 
 dist-client
 dist-server
-# dist-electron
+dist-electron
 
 release
