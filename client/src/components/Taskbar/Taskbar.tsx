@@ -11,13 +11,23 @@ export default function Taskbar() {
         click: () => nav("/task-viewer?title=Task Viewer Page"),
         icon: <VscServerProcess style={{ width: "2rem", height: "2rem" }} />,
       },
+      {
+        name: "Sensor Monitor",
+        click: () => nav("/sensor-monitor?title=Sensor Monitor Page"),
+        icon: <VscServerProcess style={{ width: "2rem", height: "2rem" }} />,
+      },
     ];
   }, []);
   return (
     <div className="task-bar">
       {utilities?.map((n, i) => {
         return (
-          <div title = {n?.name} onClick={() => n?.click()} className="utility" key={i}>
+          <div
+            title={n?.name}
+            onClick={() => n?.click()}
+            className="utility"
+            key={i}
+          >
             <span>{n?.icon}</span>
             <span>{n?.name}</span>
           </div>

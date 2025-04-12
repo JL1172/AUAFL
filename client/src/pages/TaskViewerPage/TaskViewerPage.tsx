@@ -59,9 +59,11 @@ export default function TaskViewerPage() {
   } = useTask();
   useEffect(() => {
     if (watchStatus) {
-      intervalRef.current = Number(setInterval(() => {
-        fetchTasks();
-      }, 1000));
+      intervalRef.current = Number(
+        setInterval(() => {
+          fetchTasks();
+        }, 1000)
+      );
     } else if (intervalRef.current !== -1) {
       clearInterval(intervalRef.current);
     }
@@ -103,6 +105,8 @@ export default function TaskViewerPage() {
           </div>
           <div className="process-list">
             <ColumnNames
+              filters={filters}
+              setFiltersState={setFiltersState}
               filtersState={filtersState}
               renderHighlight={renderHighlight}
             />

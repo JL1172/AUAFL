@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 import { Process, ProcessObj } from "../TaskViewerPage";
+import { FixedSizeList } from "react-window";
+import ProcessRow, { Row_Layout } from "./ProcessRow";
 interface Props {
   renderHighlight?: (n: string, o: string, p: string) => string;
   filtersState?: string[];
@@ -9,6 +11,8 @@ interface Props {
   renderOne: boolean;
   loading: boolean;
 }
+
+
 export default function ProcessRows({
   renderHighlight,
   filtersState,
@@ -18,7 +22,7 @@ export default function ProcessRows({
   renderOne,
   loading,
 }: Props) {
-  const rowLayout = useMemo(() => {
+  const rowLayout: Row_Layout[] = useMemo(() => {
     return [
       {
         hightLightKey: "Name",
@@ -41,7 +45,7 @@ export default function ProcessRows({
           (val[val.processName] as ProcessObj[])[0]?.Pid,
       },
       {
-        hightLightKey: "Threads",
+        hightLightKey: "totalThreads",
         presentation: (val: Process) => val?.totalThreads ?? 0,
       },
       {
@@ -88,41 +92,26 @@ export default function ProcessRows({
           })}
         </div>
       ) : (
-        tasks?.map((task, idx) => {
-          return (
-            <div
-            title={
-              (task as Process)?.isSystemProcess
-                ? "This is a system process"
-                : ""
-            }
-              onClick={() => {
-                if (!loading) {
-                  setTaskToKill?.(task);
-                }
-              }}
-              className={`row__ ${
-                taskToKill?.processName === task.processName ? "kill-queue" : ""
-              } ${(task as Process)?.isSystemProcess ? "system-proc" : ""}`}
-              key={idx}
-            >
-              {rowLayout.map((n, i) => {
-                return (
-                  <div
-                    key={i}
-                    className={`field ${renderHighlight?.(
-                      filtersState?.[1] || "",
-                      filtersState?.[0] || "",
-                      n?.hightLightKey
-                    )}`}
-                  >
-                    {n?.presentation(task)}
-                  </div>
-                );
-              })}
-            </div>
-          );
-        })
+        tasks &&
+        tasks?.length > 0 && (
+          <FixedSizeList
+            height={window.innerHeight}
+            itemCount={tasks?.length}
+            itemSize={50}
+            width={1167.83}
+            itemData={{
+              tasks,
+              taskToKill,
+              setTaskToKill,
+              renderHighlight,
+              filtersState,
+              loading,
+              rowLayout,
+            }}
+          >
+            {ProcessRow}
+          </FixedSizeList>
+        )
       )}
     </>
   );

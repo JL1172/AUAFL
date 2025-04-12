@@ -22,6 +22,7 @@
     "@types/express": "^5.0.1",
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.14.0",
+    "@types/react-window": "^1.8.8",
     "concurrently": "^7.0.0",
     "electron": "^35.1.4",
     "electron-builder": "^26.0.12",
@@ -31,37 +32,40 @@
     "tsx": "^4.19.3",
     "typescript": "^5.8.2"
   },
-"build": {
-  "productName": "AUAFL",
-  "appId": "com.jl1172.auafl",
-  "icon":"./auafl.png",
-  "asarUnpack": [
-    "dist-server/**/*"
-  ],
-  "files": [
-    "dist-client/**/*",
-    "dist-server/**/*", 
-    "dist-electron/**/*",
-    "package.json"
-  ],
-  "directories": {
-    "output": "release"
+  "build": {
+    "productName": "AUAFL",
+    "appId": "com.jl1172.auafl",
+    "icon": "./auafl.png",
+    "asarUnpack": [
+      "dist-server/**/*"
+    ],
+    "files": [
+      "dist-client/**/*",
+      "dist-server/**/*",
+      "dist-electron/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "linux": {
+      "target": [
+        "deb"
+      ],
+      "category": "Utility",
+      "packageCategory": "utils",
+      "maintainer": "Jacob github: JL1172",
+      "description": "Task Manager Application",
+      "synopsis": "Monitor and manage system processes",
+      "artifactName": "auafl-${version}.${ext}"
+    }
   },
-  "linux": {
-    "target": ["deb"],
-    "category": "Utility",
-    "packageCategory": "utils",
-    "maintainer": "Jacob github: JL1172",
-    "description": "Task Manager Application",
-    "synopsis": "Monitor and manage system processes",
-    "artifactName": "auafl-${version}.${ext}"
-  }
-},
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
     "morgan": "^1.10.0",
+    "react-window": "^1.8.11",
     "vite": "^6.2.5"
   }
 }

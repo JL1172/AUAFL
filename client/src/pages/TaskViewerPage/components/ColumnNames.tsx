@@ -4,9 +4,16 @@ import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 interface Props {
   filtersState: string[];
   renderHighlight: (n: string, o: string, p: string) => string;
+  filters: React.RefObject<string[]>;
+  setFiltersState: (n: string[]) => void;
 }
 
-export default function ColumnNames({ filtersState, renderHighlight }: Props) {
+export default function ColumnNames({
+  filtersState,
+  renderHighlight,
+  filters,
+  setFiltersState,
+}: Props) {
   const colNames = useMemo(() => {
     return [
       {
@@ -57,12 +64,24 @@ export default function ColumnNames({ filtersState, renderHighlight }: Props) {
       {colNames?.map((n, i) => {
         return (
           <h6
+            onClick={() => {
+              const prevState = [...filtersState];
+              if (prevState[0] === n?.key && prevState?.[1] === "desc") {
+                prevState[1] = "asc";
+              } else if (prevState[0] === n?.key && prevState?.[1] === "asc") {
+                prevState[1] = "desc";
+              } else {
+                prevState[0] = n?.key;
+                prevState[1] = "desc";
+              }
+              setFiltersState(prevState);
+              filters.current = prevState;
+            }}
             key={i}
-            className={`${renderHighlight(
-              filtersState[1],
-              filtersState[0],
-              n?.key
-            )} ${
+            className={`${
+              n?.key &&
+              renderHighlight(filtersState[1], filtersState[0], n?.key)
+            } ${
               renderHighlight(filtersState[1], filtersState[0], n?.key)
                 ? "bolden"
                 : ""
@@ -70,10 +89,10 @@ export default function ColumnNames({ filtersState, renderHighlight }: Props) {
             title={n?.tooltip}
           >
             {n?.label}
-            {renderHighlight(filtersState[1], filtersState[0], n?.key) ===
+            {  n?.key && renderHighlight(filtersState[1], filtersState[0], n?.key) ===
             "highlight" ? (
               <FaChevronDown />
-            ) : renderHighlight(filtersState[1], filtersState[0], n?.key) ===
+            ) :   n?.key && renderHighlight(filtersState[1], filtersState[0], n?.key) ===
               "highlight-green" ? (
               <FaChevronUp />
             ) : (
