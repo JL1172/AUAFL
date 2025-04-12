@@ -46,6 +46,11 @@ export default function FilterContainer({
         value: "totalVmRSS",
       },
       {
+        label: "Threads",
+        radioGroup: "filter",
+        value: "totalThreads",
+      },
+      {
         label: "Desc",
         radioGroup: "order",
         value: "desc",
@@ -81,7 +86,7 @@ export default function FilterContainer({
       </div>
       <div className="__radio-container">
       {radioArrToMap?.map((n, i) => {
-          if (i >= 3 && i < 6) {
+          if (i >= 3 && i < 7) {
             return (
               <div key={i} className="radio-filter">
                 <h6>{n?.label}</h6>
@@ -101,7 +106,7 @@ export default function FilterContainer({
       </div>
       <div className="__radio-container">
       {radioArrToMap?.map((n, i) => {
-          if (i >= 6) {
+          if (i >= 7) {
             return (
               <div key={i} className="radio-filter">
                 <h6>{n?.label}</h6>
