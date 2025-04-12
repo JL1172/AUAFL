@@ -56,9 +56,12 @@ A powerful, custom-built task manager for Linux with a modern GUI, real-time upd
 
 #### ****Build it locally:***
 
+Navigate to the main.ts, to the `startBackend` function and replace the `command` variable's value with your computer's path to node in the `else` block.
+
 **Run**
 
 ```
+
 npm run package
 
 sudo dpkg -i auafl-1.0.0.deb
