@@ -4,6 +4,7 @@ import cors from "cors";
 import helmet from "helmet";
 import { killProcess } from "./kill-process/index.js";
 import { view_system_processes as viewTasks } from "./task-viewer/index.js";
+import { view_sensors } from "./sensors/view-cpu-temp.js";
 const server = express();
 const port = 4000;
 
@@ -16,7 +17,7 @@ server.post("/process", async (req: Request, res: Response, next) => {
   try {
     const listOfProcesses = await viewTasks(
       req?.body?.filters,
-      req?.body?.previousProcArr,
+      req?.body?.previousProcArr
     );
     res.status(200).json({ processes: listOfProcesses });
   } catch (err: unknown) {
@@ -49,6 +50,19 @@ server.patch("/kill-process", async (req: Request, res: Response, next) => {
     {
       next(err);
     }
+  }
+});
+server.get("/sensors", async (req: Request, res: Response, next) => {
+  try {
+    const sensor_information = await view_sensors();
+    if (sensor_information === null) {
+      const err = { message: "Error reading machine sensors", status: 500 };
+      return next(err);
+    } else {
+      res.status(200).json({ data: sensor_information });
+    }
+  } catch (err) {
+    next(err);
   }
 });
 //eslint-disable-next-line
