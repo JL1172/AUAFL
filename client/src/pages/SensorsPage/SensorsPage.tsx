@@ -29,7 +29,6 @@ export default function SensorsPage() {
     }
     //eslint-disable-next-line
   }, []);
-  console.log(sensorInfo);
   return (
     <div className="sensors-page">
       <div className="sensor-container">
