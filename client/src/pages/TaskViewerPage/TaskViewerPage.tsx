@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import "./taskviewer-page.scss";
-import { useTask } from "./hooks/useTask";
+import { useTask } from "../../contexts/TaskViewerContext";
 import FilterContainer from "./components/FilterContainer";
 import ColumnNames from "./components/ColumnNames";
 import ProcessRows from "./components/ProcessRows";
@@ -40,88 +40,35 @@ export interface Process {
   isSystemProcess: boolean;
 }
 export default function TaskViewerPage() {
-  const {
-    fetchTasks,
-    watchStatus,
-    setWatchStatus,
-    tasks,
-    intervalRef,
-    viewFilters,
-    filters,
-    filtersState,
-    setViewFilters,
-    setFiltersState,
-    renderHighlight,
-    taskToKill,
-    setTaskToKill,
-    killProcess,
-    loading,
-  } = useTask();
+  const { fetchTasks, watchStatus, tasks, intervalRef, pollingIntervalRef, intervalState } = useTask()!;
   useEffect(() => {
     if (watchStatus) {
       intervalRef.current = Number(
         setInterval(() => {
           fetchTasks();
-        }, 1000)
+        }, Number(pollingIntervalRef?.current?.value)) || 1000
       );
-    } else if (intervalRef.current !== -1) {
-      clearInterval(intervalRef.current);
-    }
-
+    } 
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
     };
     //eslint-disable-next-line
-  }, [watchStatus]);
+  }, [watchStatus,intervalState ]);
   return (
-    tasks?.length && (
-      <div className="task--page--container--">
-        <div className="task-container">
-          <div className="top-row--">
-            <TaskContainerHeader
-              setViewFilters={setViewFilters}
-              setWatchStatus={setWatchStatus}
-              watchStatus={watchStatus}
-              viewFilters={viewFilters}
-            />
-            <FilterContainer
-              viewFilters={viewFilters}
-              filtersState={filtersState}
-              setViewFilters={setViewFilters}
-              filters={filters}
-              setFiltersState={setFiltersState}
-            />
-            <KillTaskQueue
-              killProcess={killProcess}
-              loading={loading}
-              tasks={tasks}
-              renderHighlight={renderHighlight}
-              filtersState={filtersState}
-              setTaskToKill={setTaskToKill}
-              taskToKill={taskToKill}
-            />
-          </div>
-          <div className="process-list">
-            <ColumnNames
-              filters={filters}
-              setFiltersState={setFiltersState}
-              filtersState={filtersState}
-              renderHighlight={renderHighlight}
-            />
-            <ProcessRows
-              loading={loading}
-              renderOne={false}
-              tasks={tasks}
-              renderHighlight={renderHighlight}
-              filtersState={filtersState}
-              setTaskToKill={setTaskToKill}
-              taskToKill={taskToKill}
-            />
-          </div>
+    <div className="task--page--container--">
+      <div className="task-container">
+        <div className="top-row--">
+          <TaskContainerHeader />
+          <FilterContainer />
+          <KillTaskQueue />
+        </div>
+        <div className="process-list">
+          <ColumnNames />
+          {tasks?.length > 0 && <ProcessRows renderOne={false} />}
         </div>
       </div>
-    )
+    </div>
   );
 }

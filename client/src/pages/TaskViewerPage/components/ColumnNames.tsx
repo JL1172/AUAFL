@@ -1,19 +1,12 @@
 import { useMemo } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { useTask } from "../../../contexts/TaskViewerContext";
 
-interface Props {
-  filtersState: string[];
-  renderHighlight: (n: string, o: string, p: string) => string;
-  filters: React.RefObject<string[]>;
-  setFiltersState: (n: string[]) => void;
-}
 
-export default function ColumnNames({
-  filtersState,
-  renderHighlight,
-  filters,
-  setFiltersState,
-}: Props) {
+
+export default function ColumnNames() {
+  const { filtersState, renderHighlight, filters, setFiltersState } =
+    useTask()!;
   const colNames = useMemo(() => {
     return [
       {
@@ -89,11 +82,13 @@ export default function ColumnNames({
             title={n?.tooltip}
           >
             {n?.label}
-            {  n?.key && renderHighlight(filtersState[1], filtersState[0], n?.key) ===
-            "highlight" ? (
+            {n?.key &&
+            renderHighlight(filtersState[1], filtersState[0], n?.key) ===
+              "highlight" ? (
               <FaChevronDown />
-            ) :   n?.key && renderHighlight(filtersState[1], filtersState[0], n?.key) ===
-              "highlight-green" ? (
+            ) : n?.key &&
+              renderHighlight(filtersState[1], filtersState[0], n?.key) ===
+                "highlight-green" ? (
               <FaChevronUp />
             ) : (
               ""

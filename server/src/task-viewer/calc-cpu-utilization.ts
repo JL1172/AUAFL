@@ -5,7 +5,8 @@ export function calculateCpuUtilization(
   display_cpu_utilization_flag: boolean,
   previous_process_arr: Process[] = [],
   idx_tracker: number,
-  system_process_array: Process[]
+  system_process_array: Process[],
+  pollingInterval: number
 ) {
   if (
     display_cpu_utilization_flag === true &&
@@ -73,7 +74,7 @@ export function calculateCpuUtilization(
           const time_difference =
             (curr_sub_proc.rawCpuTime.timestamp -
               prev_matching_sub_proc.rawCpuTime.timestamp) /
-            1000;
+            pollingInterval;
 
           if (time_difference <= 0) continue;
 

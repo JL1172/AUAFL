@@ -1,18 +1,11 @@
 import { useMemo } from "react";
+import { useTask } from "../../../contexts/TaskViewerContext";
 
-interface Props {
-  viewFilters: boolean;
-  filtersState: string[];
-  setViewFilters: (n: boolean) => void;
-  filters: React.RefObject<string[]>;
-  setFiltersState: (n: string[]) => void;
-}
-export default function FilterContainer({
-  viewFilters,
-  filtersState,
-  setFiltersState,
-  filters,
-}: Props) {
+export default function FilterContainer() {
+  const {  viewFilters,
+    filtersState,
+    setFiltersState,
+    filters,} =useTask()!;
   const radioArrToMap = useMemo(() => {
     return [
       {

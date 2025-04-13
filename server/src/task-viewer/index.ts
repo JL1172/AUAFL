@@ -13,6 +13,7 @@ function log(log: string, persist_process?: boolean) {
 
 async function view_system_processes(
   filters: string[],
+  pollingInterval: number,
   previous_process_arr?: Process[]
 ) {
   try {
@@ -102,7 +103,7 @@ async function view_system_processes(
       display_cpu_utilization_flag,
       previous_process_arr,
       idx_tracker,
-      system_process_array
+      system_process_array,pollingInterval
     );
 
     //apply filters

@@ -2,26 +2,18 @@ import { useMemo } from "react";
 import { Process, ProcessObj } from "../TaskViewerPage";
 import { FixedSizeList } from "react-window";
 import ProcessRow, { Row_Layout } from "./ProcessRow";
-interface Props {
-  renderHighlight?: (n: string, o: string, p: string) => string;
-  filtersState?: string[];
-  tasks?: Process[];
-  setTaskToKill?: React.Dispatch<React.SetStateAction<Process | null>>;
-  taskToKill?: Process | null;
-  renderOne: boolean;
-  loading: boolean;
-}
+import { useTask } from "../../../contexts/TaskViewerContext";
 
 
-export default function ProcessRows({
-  renderHighlight,
-  filtersState,
-  tasks,
-  setTaskToKill,
-  taskToKill,
-  renderOne,
-  loading,
-}: Props) {
+export default function ProcessRows({renderOne}: {renderOne: boolean}) {
+  const {
+    renderHighlight,
+    filtersState,
+    tasks,
+    setTaskToKill,
+    taskToKill,
+    loading,
+  } = useTask()!;
   const rowLayout: Row_Layout[] = useMemo(() => {
     return [
       {

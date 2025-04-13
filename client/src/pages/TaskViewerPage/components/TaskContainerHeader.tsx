@@ -1,19 +1,18 @@
 import { CiPause1 } from "react-icons/ci";
 import { IoFilter } from "react-icons/io5";
 import { RxResume } from "react-icons/rx";
+import { useTask } from "../../../contexts/TaskViewerContext";
 
-interface Props {
-  setViewFilters: (n: boolean) => void;
-  watchStatus: boolean;
-  setWatchStatus: (n: boolean) => void;
-  viewFilters: boolean;
-}
-export default function TaskContainerHeader({
-  setViewFilters,
-  viewFilters,
-  setWatchStatus,
-  watchStatus,
-}: Props) {
+export default function TaskContainerHeader() {
+  const {
+    setViewFilters,
+    viewFilters,
+    setWatchStatus,
+    watchStatus,
+    setIntervalState,
+    pollingIntervalRef,
+    intervalState,
+  } = useTask()!;
   return (
     <div className="first-top">
       <span
@@ -25,6 +24,15 @@ export default function TaskContainerHeader({
         <IoFilter />
       </span>
       <h5>System Processes </h5>
+      <span>
+        <h6>Polling Interval (ms):</h6>
+        <input
+          ref={pollingIntervalRef}
+          type="number"
+          value={intervalState}
+          onChange={(e) => setIntervalState(+e.target.value)}
+        />
+      </span>
       <span onClick={() => setWatchStatus(!watchStatus)} className="pause">
         <h6>{watchStatus ? "Pause Watch" : "Resume Watch"}</h6>
         {watchStatus ? (

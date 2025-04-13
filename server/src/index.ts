@@ -17,7 +17,8 @@ server.post("/process", async (req: Request, res: Response, next) => {
   try {
     const listOfProcesses = await viewTasks(
       req?.body?.filters,
-      req?.body?.previousProcArr
+      req?.body?.previousProcArr,
+      req?.body?.pollingInterval
     );
     res.status(200).json({ processes: listOfProcesses });
   } catch (err: unknown) {

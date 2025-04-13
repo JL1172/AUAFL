@@ -4,11 +4,12 @@ import SensorContainerHeader from "./components/SensorContainerHeader";
 import { useSensors } from "../../contexts/SensorContext";
 import SensorGuages from "./components/SensorGauges";
 export default function SensorsPage() {
-  const { fetchSensorInfo, intervalRef, pollingIntervalRef } = useSensors()!;
+  const { fetchSensorInfo, intervalRef, pollingIntervalRef, intervalState } = useSensors()!;
   useEffect(() => {
     if (pollingIntervalRef?.current?.value) {
       intervalRef.current = +setInterval(() => {
         fetchSensorInfo();
+        
       }, Number(pollingIntervalRef?.current?.value) || 1000);
       return () => {
         if (intervalRef.current) {
@@ -17,7 +18,7 @@ export default function SensorsPage() {
       };
     }
     //eslint-disable-next-line
-  }, []);
+  }, [intervalState]);
   return (
     <div className="sensors-page">
       <div className="sensor-container">

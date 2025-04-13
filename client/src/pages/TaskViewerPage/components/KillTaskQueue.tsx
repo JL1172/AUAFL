@@ -2,24 +2,16 @@ import { CiCircleRemove } from "react-icons/ci";
 import { Process } from "../TaskViewerPage";
 import ProcessRows from "./ProcessRows";
 import { IoWarningOutline } from "react-icons/io5";
-interface Props {
-  renderHighlight?: (n: string, o: string, p: string) => string;
-  filtersState?: string[];
-  tasks?: Process[];
-  setTaskToKill?: React.Dispatch<React.SetStateAction<Process | null>>;
-  taskToKill?: Process | null;
-  loading: boolean;
-  killProcess: (task: Process) => Promise<void>;
-}
-export default function KillTaskQueue({
-  taskToKill,
-  tasks,
-  loading,
-  setTaskToKill,
-  renderHighlight,
-  killProcess,
-  filtersState,
-}: Props) {
+import { useTask } from "../../../contexts/TaskViewerContext";
+
+export default function KillTaskQueue() {
+  const {
+    taskToKill,
+    tasks,
+    loading,
+    setTaskToKill,
+    killProcess,
+  } = useTask()!;
   return (
     <div
       className={`${
@@ -53,23 +45,21 @@ export default function KillTaskQueue({
         >
           Kill Task
         </button>
-        {(tasks?.find(
-              (task) => task.processName === taskToKill?.processName
-            ) ?? taskToKill)?.isSystemProcess && <span className="warning"><IoWarningOutline style={{height: "1.5rem", width: "1.5rem", color: "red"}} /> Warning, this process is a system process</span>}
+        {(
+          tasks?.find((task) => task.processName === taskToKill?.processName) ??
+          taskToKill
+        )?.isSystemProcess && (
+          <span className="warning">
+            <IoWarningOutline
+              style={{ height: "1.5rem", width: "1.5rem", color: "red" }}
+            />{" "}
+            Warning, this process is a system process
+          </span>
+        )}
       </div>
       {taskToKill && (
         <ProcessRows
           renderOne={true}
-          loading={loading}
-          tasks={[
-            tasks?.find(
-              (task) => task.processName === taskToKill.processName
-            ) ?? taskToKill,
-          ]}
-          renderHighlight={renderHighlight}
-          filtersState={filtersState}
-          setTaskToKill={setTaskToKill}
-          taskToKill={taskToKill}
         />
       )}
     </div>

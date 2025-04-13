@@ -6,6 +6,7 @@ import Taskbar from "./components/Taskbar/Taskbar";
 import { AppSetupProvider } from "./contexts/AppSetupContext";
 import SensorsPage from "./pages/SensorsPage/SensorsPage";
 import { SensorProvider } from "./contexts/SensorContext";
+import { TaskViewerProvider } from "./contexts/TaskViewerContext";
 
 function App() {
   return (
@@ -14,7 +15,14 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/task-viewer" element={<TaskViewerPage />} />
+          <Route
+            path="/task-viewer"
+            element={
+              <TaskViewerProvider>
+                <TaskViewerPage />
+              </TaskViewerProvider>
+            }
+          />
           <Route
             path="/sensor-monitor"
             element={
