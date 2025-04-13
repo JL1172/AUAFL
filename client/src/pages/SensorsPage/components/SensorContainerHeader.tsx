@@ -1,19 +1,14 @@
-type Props = {
-  pollingIntervalRef: React.RefObject<HTMLInputElement | null>;
-  setIntervalState: (n: number) => void;
-  intervalState: number;
-  maxTempThreshold: React.RefObject<HTMLInputElement | null>;
-  maxTempState: [number, string];
-  setMaxTempState: (n: [number, string]) => void;
-};
-export default function SensorContainerHeader({
-  pollingIntervalRef,
-  intervalState,
-  setIntervalState,
-  maxTempState,
-  setMaxTempState,
-  maxTempThreshold,
-}: Props) {
+import { useSensors } from "../../../contexts/SensorContext";
+
+export default function SensorContainerHeader() {
+  const {
+    pollingIntervalRef,
+    intervalState,
+    setIntervalState,
+    maxTempState,
+    setMaxTempState,
+    maxTempThreshold,
+  } = useSensors()!;
   return (
     <>
       <div className="first-top">

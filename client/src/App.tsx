@@ -3,8 +3,9 @@ import TaskViewerPage from "./pages/TaskViewerPage/TaskViewerPage";
 import HomePage from "./pages/HomePage/HomePage";
 import Header from "./components/Header/Header";
 import Taskbar from "./components/Taskbar/Taskbar";
-import { AppSetupProvider } from "./context/AppSetupContext";
+import { AppSetupProvider } from "./contexts/AppSetupContext";
 import SensorsPage from "./pages/SensorsPage/SensorsPage";
+import { SensorProvider } from "./contexts/SensorContext";
 
 function App() {
   return (
@@ -14,7 +15,14 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/task-viewer" element={<TaskViewerPage />} />
-          <Route path="/sensor-monitor" element={<SensorsPage />} />
+          <Route
+            path="/sensor-monitor"
+            element={
+              <SensorProvider>
+                <SensorsPage />
+              </SensorProvider>
+            }
+          />
           <Route />
         </Routes>
         <Taskbar />

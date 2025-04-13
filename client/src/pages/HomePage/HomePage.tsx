@@ -1,5 +1,5 @@
 
-import { useApp } from "../../context/AppSetupContext";
+import { useApp } from "../../contexts/AppSetupContext";
 import "./home-page.scss";
 
 export default function HomePage() {

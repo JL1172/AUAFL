@@ -1,7 +1,7 @@
 import { VscTerminalLinux } from "react-icons/vsc";
 import "./header.scss";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useApp } from "../../context/AppSetupContext";
+import { useApp } from "../../contexts/AppSetupContext";
 export default function Header() {
   const nav = useNavigate();
   const { search } = useLocation();
