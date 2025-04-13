@@ -64,7 +64,7 @@ export const TaskViewerProvider = ({ children }: { children: React.ReactNode }) 
         setTasks(res?.data?.processes);
         previousTaskRef.current = res?.data?.processes;
       } else {
-        const res = await axiosInsance.post("process", {
+        const res = await axiosInsance.post("/process", {
           previosProcArr: undefined,
           filters: filters.current,
           pollingInterval: intervalState
