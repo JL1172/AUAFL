@@ -70,4 +70,5 @@ sudo dpkg -i auafl-1.0.0.deb
 auafl
 
 ```
-> [!IMPORTANT] You will now have an application on your desktop called AUAFL
+> [!IMPORTANT]
+> You will now have an application on your desktop called AUAFL
